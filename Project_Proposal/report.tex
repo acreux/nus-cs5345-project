@@ -43,6 +43,7 @@ Goodreads data is not available online, we have to acquire all data through thei
 
 We have decided to query the data using other APIs, available at \cite{goodreads:api}:
 \begin{itemize}
+\item friend - Get a user's friend
 \item group.list - List groups for a given user
 \item group.members - Return members of a particular group
 \item group.show - Get info about a group
@@ -62,11 +63,15 @@ Here, we can see that 4 user networks can be generated:
 \item based on the books a user has read, we can build a user network named Book Network
 \end{itemize}
 
-The first goal here is to gather a relatively acceptable amount of data.
+Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worlwide).
+Based on the top users, we have a list of user_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is fan of, the groups the user belongs to.
+
 
 
 \section{Project Objectives}
-The first objective is to query all the data.
+The first objective is to query all the data, and store it efficiently.
+On a second time, we will develop a clustering algorithm, in other words, given a set of users, group them into a group where whose members share similarities.
+We will try to identify cliques or less precisely, relevant social cirles for each network. Then, we will compare the different patterns we could make out between these cliques.
 
 
 \section{Proposed Contributions}
@@ -75,6 +80,6 @@ The first objective is to query all the data.
 \section{Deliverables}
 
 
-    \bibliographystyle{abbrv}
-    \bibliography{references}
+\bibliographystyle{abbrv}
+\bibliography{references}
 \end{document}

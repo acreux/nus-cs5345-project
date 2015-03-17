@@ -17,7 +17,7 @@
 \date{March 18th, 2014}
 
 \begin{document}
-    \maketitle
+\maketitle
 
 
 \section{Concept Study}
@@ -45,7 +45,7 @@ Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying g
 \section{Underlying Assumptions}
 \section{Requirements}
 
-Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user_id. They then decided to query for user_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
+Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
 
 We have decided to query the data using other APIs, available at \cite{goodreads:api}:
 \begin{itemize}
@@ -53,7 +53,7 @@ We have decided to query the data using other APIs, available at \cite{goodreads
 \item group.members - Return members of a particular group
 \item group.show - Get info about a group
 \item fanship.show - Show author fanship information
-\item owned_books.list - List books owned by a user
+\item owned\_books.list - List books owned by a user
 \item shelves.list - Get shelves owned by a user
 \item user.show - Get shelves owned by a user
 \item user.followers - Get user's followers
@@ -68,11 +68,32 @@ Here, we can see that 4 user networks can be generated:
 \item based on the books a user has read, we can build a user network named Book Network
 \end{itemize}
 
-The first goal here is to gather a relatively acceptable amount of data.
-
+Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worlwide).
+Based on the top users, we have a list of user\_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is fan of, the groups the user belongs to.
 
 \section{Project Objectives}
 The first objective is to query all the data.
+
+\section{Literature review}
+
+We compare n methods for the clustering of our dataset. We give a brief summary of the different clustering methods and state if these methods will be scalable to our own dataset.
+
+Quantitatively, clustering aims at assigning each data point to a cluster.
+
+\subsection{K-means}
+
+K-means clustering aims at computing k clusters from that will minimize the distance from the data points to the cluster, such as we will split n data points into k groups. 
+
+% $\arg\min_{c} \sum_{i=1}^k\sum_{\b{x}\in c_i} d(\b{x},\mu_i) = \arg\min_\b{c} \sum_{i=1}^k\sum_{\b{x}\in c_i} \left\Vert \b{x}-\mu_i \right\Vert_2^2$
+
+It does not apply only to graphs.
+The most common application of k-means clustering is the iterative algorithm named Lloyd's algorithm:
+\begin{enumerate}
+\item Initalize (randomly preferably) the center of the k clusters
+\item For each point, assign to it the closest cluster
+\item Compute the new position of every cluster as the center of all data points assigned to this cluster
+\item Repeat 2 and 3 until the clusters do not move (Relative to a $\epsilon$ for instance)
+\end{enumerate}
 
 
 \section{Proposed Contributions}

@@ -23,8 +23,8 @@
 \section{Concept Study}
 
 
-Goodreads is a website launched in early 2007, which lets ``people find and share books they love... [and] improve the process of reading and learning throughout the world.''\cite{goodreads:aboutus}. Two months after Flixster\cite{flixter}, a website where users share and rate movies they watch, Goodreads let anyone record and mark the books they have read, and share with everyone their reaction after reading the last best-seller they \'ve just devoured.\\
-Besides, goodreads has developed a social network above this book sharing experience. This platform connects people to books and authors by share ratings and recommendations, and thus gather people together. Readers see what their friends have read, but they can also meet new people sharing the same literature taste. In 2015, Goodreads platform gathers 34 million reviews from 30 million members on 900 million books.\cite{https://www.goodreads.com/about/us}.
+Goodreads is a website launched in early 2007, which lets ``people find and share books they love... [and] improve the process of reading and learning throughout the world.''\cite{goodreads:aboutus}. Two months after Flixster\cite{flixter}, a website where users share and rate movies they have watched, Goodreads let anyone record and mark the books they have read, and share with everyone their reaction after reading the last best-seller they \'ve just devoured.\\
+Besides, goodreads has developed a social network above this book sharing experience. This platform connects people to books and authors by share ratings and recommendations, and thus gather people together. Readers see what their friends have read, but they can also meet new people sharing the same literature taste. In 2015, Goodreads platform gathers 34 million reviews from 30 million members on 900 million books\cite{goodreads:aboutus}.
 
 
 % Friends // Follow authors // Recommendation system
@@ -39,11 +39,36 @@ Finally, based on our generated graph, and if we have enough time to implement i
 \section{Underlying Assumptions}
 \section{Requirements}
 
-Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they gathered and we think that their data acquisition is wrongly implemented based on erroneous assumptions.
+Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user_id. They then decided to query for user_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
 
+We have decided to query the data using other APIs, available at \cite{goodreads:api}:
+\begin{itemize}
+\item group.list - List groups for a given user
+\item group.members - Return members of a particular group
+\item group.show - Get info about a group
+\item fanship.show - Show author fanship information
+\item owned_books.list - List books owned by a user
+\item shelves.list - Get shelves owned by a user
+\item user.show - Get shelves owned by a user
+\item user.followers - Get user's followers
+\item user.following - Get people a user is following
+\end{itemize}
+
+Here, we can see that 4 user networks can be generated:
+\begin{itemize}
+\item based on the followed-follower relationship between two users, we can build a user network named the Twitter Network
+\item based on the groups a user is a member of, we can build a user network named Group Network
+\item based on the authors a user is fan of, we can build a user named Author Network
+\item based on the books a user has read, we can build a user network named Book Network
+\end{itemize}
+
+The first goal here is to gather a relatively acceptable amount of data.
 
 
 \section{Project Objectives}
+The first objective is to query all the data.
+
+
 \section{Proposed Contributions}
 \section{Success Measures}
 \section{Project Plan}

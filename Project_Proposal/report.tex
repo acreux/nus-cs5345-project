@@ -23,6 +23,8 @@
 \section{Concept Study}
 Goodreads is a website launched in early 2007, which lets ``people find and share the books they like and improve the process of reading and learning throughout the world.'' It is the world's largest site for readers and book recommendations with a user base of about  30 million members along with 34 million reviews from 900 million books as recorded in 2015 \cite{goodreads:aboutus}.
 
+Goodreads is a website launched in early 2007, which lets ``people find and share the books they like and improve the process of reading and learning throughout the world.'' It is the world’s largest site for readers and book recommendations with a user base of about  30 million members along with 34 million reviews from 900 million books as recorded in 2015 \cite{goodreads:aboutus}.
+
 Goodreads provides a multitude of features to its users. It goes beyond the traditional rating and reviewing of books by allowing users to make friends and join and form reading groups based on their literary tastes. Users can not only see what their friends have read, but they can also meet new people with similar reading interests. They can make recommendations to friends , follow authors, track the books they are currently reading, have read and want to read. In addition, goodreads provides personalized recommendations to book readers by analyzing the user data. \\
 
 To capture the notion of similar interest among the users of goodreads  the concept of one-mode analyses of bipartite network data(also known as affiliation network in sociology terminology) can be used \cite{wasserman}. Such analyses use matrices derived from the affiliation matrix, $\mathcal{A}$, wherein actors are represented in rows and the events are represented in columns.
@@ -36,6 +38,8 @@ There are different classes of community detection algorithms. Graph partitionin
 
 \section{Problem Description}
 In this project, we aim to probe the groups of users within goodreads based on their reading interests. As stated earlier, goodreads is more than just a book reviewing website. Users and authors on goodreads can connect amongst themselves forming a rich social network. We do not want to observe the groups/clusters within such a social network, which already exists in goodreads, since this network may not necessarily capture the reading interests of the users in it. We will use the information about the books read by the users and ratings given by them to capture the ties amongst the users.\\
+
+In this project, we aim to probe the groups of users within goodreads based on their reading interests. As stated earlier, goodreads is more than just a book reviewing website. Users and authors on goodreads can connect amongst themselves forming a rich social network. We do not want to observe the groups/clusters within such a social network, which already exists in goodreads, since this network may not necessarily capture the reading interests of the users in it. We will use the information about the books read, the authors people are fans of and the group memberships to capture the ties amongst the users. \\\\
 
 In this section, we only focus on the book read by two users. Let $U$ and $B$ be the set of users and the set of books on goodreads respectively. We will construct an undirected bipartite graph $G(V, E)$ using these two sets where $V ~=~ U \cup B$. An edge exists betweem a vertex $u_i \in U$ and a vertex $b_k \in B$ if a user $u_i$ has read book $b_k$.\\\\
 We consider the rating given by a user $u_i$ to a book $b_k$ to assign weight to the edge between them. The weight to this edge plays an important role in the semantics of the network. Consider a scenario wherein a book $b_k$ is read by both the users $u_i$ and $u_j$. Suppose user $u_i$ has liked the book and hence has positively rated the book whereas user $u_j$ has not liked the book and so has given a low rating to the book. If we do not take this fact into the account then these users might end up being placed in a same reading group. So as to prevent this situation, we assign weight to the edges in $G$. Let $r_{ik}$ be the rating given by user $u_i$ to book $b_k$. Let $w \rightarrow E \times \{1, -1\}$ be the weight function.\\
@@ -63,6 +67,9 @@ Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying g
 
 
 \section{Underlying Assumptions}
+
+Goodreads data set is not available online and  we will have to acquire all the data through their APIs. Hence, as of now, it is not feasible to state appropriate assumptions since we do not have an exact picture of the data. Once we have obtained all the data we will update this section.
+
 \section{Data acquisition}
 
 Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
@@ -128,20 +135,33 @@ Based on the large information we can have on a user, we can generate several ki
 As of the literature survey done upto now there has not been a study on the detection of communities of readers with similar reading interests on goodreads dataset. This work will aim to identify such communities using algorithms for community detection such as Girvan-Newman algorithm and compare the communities detected with the already formed groups on goodreads and analyse how different or similar they are. This would give us insights into whether the friendship and groups formed on goodreads are based on reading intersts or there are other factors that come into play.It be especially useful to authors in identifying the right target audience for their work.
 
 In addition, if we get time we can also look at how the recommendations and friendships in the goodreads' user network affects their choice of books. This information can be used by gooddreads themselves to improve their recommendation engine.
+
 \section{Success Measures}
 
 Our entire work depends on acquiring the data in a short amount of time. We consider we validate this part if we manage to gather at least one million users with all their features (friends, books owned, followers, users following\dots) stored.\\
 % Then, we will implement a clustering algorithm presented in section \ref{sec:literature_review} that we will try to apply.
+Then, we will evaluate our clustering algorithm by studying by hand the communities formed. We expect to see communities gathered around common literature tastes such as science-fiction, romance or detective novels. 
 
 
 \section{Project Plan}
-Week 0 - Identifying the project area, datasets to work on and conducting literature review.
-Week 1 -  Collecting the data from the various goodreads APIs as mentioned above.
-Week 2 -  Data cleaning, formulating assumptions based on the data and modifying the project objectives accordingly. These changes will be reflected in the Project Milestone report.
-Week 3 and Week 4 - Implementing the community detection algorithms on the data and analysing the results.
-Week 5 - Interpretation and documentation of the results 
+\begin{itemize}
+\item Week 0 - Identifying the project area, datasets to work on and conducting literature review.
+\item Week 1 -  Collecting the data from the various goodreads APIs as mentioned above.
+\item Week 2 -  Data cleaning, formulating assumptions based on the data and modifying the project objectives accordingly. These changes will be reflected in the Project Milestone report.
+\item Week 3 \& Week 4 - Implementing the community detection algorithms on the data and analysing the results.
+\item Week 5 - Interpretation and documentation of the results
+\end{itemize}
 \section{Deliverables}
 
+The deliverables will be composed of a commented and tested code that will:
+\begin{itemize}
+\item Query the Goodreads API
+\item Store the data in a database
+\item Implement the community clustering
+\item Apply the algorithm to goodreads data
+\end{itemize}
+
+Also, a deep study of the results of the algorithm will be conducted through comments and illustrations.
 
 \bibliographystyle{abbrv}
 \bibliography{references}

@@ -47,12 +47,10 @@ We consider the rating given by a user $u_i$ to a book $b_j$ to assign weight to
 where $\alpha$ is some threshold which can be tuned during the experimentation.
 \\\\
 Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying graph $G$. If there exists an edge between user $u_i$ and book $b_j$ then $\mathcal{M}_{ij}^{th}$ entry in the matrix is set to the weight of the corresponding edge otherwise the entry is set to zero. We obtain $\mathcal{U}$, matrix encoding the relationship amongst the users, using $\mathcal{M}$ by calculating $\mathcal{M}\mathcal{M}^{T}$. The graph encoded by $\mathcal{U}$ is the graph of the interest for finding the user groups. We propose to explore the interesting user groups by using graph partitioning algorithms like Girvan-Newmann algorithm.
-
-
 \section{Underlying Assumptions}
-\section{Requirements}
+\section{Data acquisition}
 
-Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user_id. They then decided to query for user_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
+Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
 
 We have decided to query the data using other APIs, available at \cite{goodreads:api}:
 \begin{itemize}
@@ -60,25 +58,71 @@ We have decided to query the data using other APIs, available at \cite{goodreads
 \item group.members - Return members of a particular group
 \item group.show - Get info about a group
 \item fanship.show - Show author fanship information
-\item owned_books.list - List books owned by a user
+\item owned\_books.list - List books owned by a user
 \item shelves.list - Get shelves owned by a user
 \item user.show - Get shelves owned by a user
 \item user.followers - Get user's followers
 
-Here, we can see that 4 user networks can be generated:
+Here, we see we can add many kinds of information related to the network of a user:
 \begin{itemize}
-\item based on the followed-follower relationship between two users, we can build a user network named the Twitter Network
-\item based on the groups a user is a member of, we can build a user network named Group Network
-\item based on the authors a user is fan of, we can build a user named Author Network
-\item based on the books a user has read, we can build a user network named Book Network
+\item such as in Twitter, a user can follow other users, and can be followed
+\item a user can take part in reading groups
+\item a user can be fan of an author
+\item we have all books stored in all shelves of a use
 \end{itemize}
 
-The first goal here is to gather a relatively acceptable amount of data.
+Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worlwide).
+Based on the top users, we have a list of user\_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is fan of and the groups the user belongs to.\
+Finally, we only can query a user data if the profile is public. Based on our first study, most profile are public and thus should not raise an issue. Even so, we will store the information that a user profile is private.
 
 
 \section{Project Objectives}
-The first objective is to query all the data.
 
+\section{Literature review}
+
+We compare n methods for the clustering of our dataset. We give a brief summary of the different clustering methods and state if these methods will be scalable to our own dataset.
+
+Quantitatively, clustering aims at assigning each data point to a cluster.
+
+
+
+\subsection{Hierarchical Clustering}
+Hierarchical clustering builds a hierarchy of clusters, Either it is built \emph{bottom up}, as we start with the same numbers of clusters and data points, and we try to group clusters with each other. The \emph{top down} us the opposite: we start with a unique cluster that we are going to split recursevely.\\
+
+Complexity is very high ($\Theta$($n^3$)), and thus is not pertinent to big datasets, even if heuristics lower the complexity to ($\Theta$($n^2$).
+
+
+
+
+\subsection{K-Means Clustering}
+
+K-means clustering aims at computing k clusters from that will minimize the distance from the data points to the cluster, such as we will split n data points into k groups. It is a centroid-based clustering, and does not apply only to graphs.
+The most common application of k-means clustering is the iterative algorithm named Lloyd's algorithm.
+The major issue is that we have to set in advance the number of clusters we want to 
+
+\begin{enumerate}
+\item Initalize (randomly preferably) the center of the k clusters
+\item For each point, assign to it the closest cluster
+\item Compute the new position of every cluster as the center of all data points assigned to this cluster
+\item Repeat 2 and 3 until the clusters do not move (Relative to a $\epsilon$ for instance)
+\end{enumerate}
+
+
+% http://networkx.github.io/documentation/networkx-1.9.1/reference/generated/networkx.algorithms.cluster.clustering.html?highlight=clustering#networkx.algorithms.cluster.clustering
+
+% http://jponnela.com/web_documents/a9.pdf     network x clustering algo
+
+% Girvan-Newman algo
+% https://en.wikipedia.org/wiki/Girvan%E2%80%93Newman_algorithm
+
+% Graph tool algo
+% http://graph-tool.skewed.de/static/doc/clustering.html
+
+% Clustering Stanford
+% http://web.stanford.edu/class/cs345a/slides/12-clustering.pdf
+
+% Stanford goodreads
+% http://cs229.stanford.edu/proj2008/IsaacsonSebastian-GoodReadsRecommendations.pdf
 
 \section{Proposed Contributions}
 \section{Success Measures}

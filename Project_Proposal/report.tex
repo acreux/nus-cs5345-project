@@ -64,6 +64,10 @@ $\forall (i, k) \in F=U \cup G$,
 Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying graph $G$. If there exists an edge between user $u_i$ and book $b_k$ then $\mathcal{M}_{ik}^{th}$ entry in the matrix is set to the weight of the corresponding edge otherwise the entry is set to zero. We obtain $\mathcal{U}$, matrix encoding the relationship amongst the users, using $\mathcal{M}$ by calculating $\mathcal{M}\mathcal{M}^{T}$. The graph encoded by $\mathcal{U}$ is the graph of the interest for finding the user groups. We propose to explore the interesting user groups by using graph partitioning algorithms like Girvan-Newmann algorithm.
 
 
+\section{Underlying Assumptions}
+
+Goodreads data set is not available online and  we will have to acquire all the data through their APIs. Hence, as of now, it is not feasible to state appropriate assumptions since we do not have an exact picture of the data. Once we have obtained all the data we will update this section.
+
 \section{Data acquisition}
 
 Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.

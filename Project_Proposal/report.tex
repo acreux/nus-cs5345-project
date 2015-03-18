@@ -55,7 +55,7 @@ Agglomerative clustering techniques are computationally expensive. Divisive algo
 \section{Problem Description}
 In this project, we aim to probe the groups of users within goodreads based on their reading interests. As stated earlier, goodreads is more than just a book reviewing website. Users and authors on goodreads can connect amongst themselves forming a rich social network. We do not want to observe the groups/clusters within such a social network, which already exists in goodreads, since this network may not necessarily capture the reading interests of the users in it. We will use the information about the books read by the users and ratings given by them to capture the ties amongst the users.\\
 
-In this section, we only focus on the book read by two users. Let $U$ be the set of users and $B$ the set of books on goodreads. We will construct an undirected bipartite graph $G(V, E)$ using these two sets where $V ~=~ U \cup B$ and $E~=~U \times B$. An edge exists between a vertex $u_i \in U$ and a vertex $b_k \in B$ if a user $u_i$ has read book $b_k$.\\\\
+In this section we illustrate with an example. Let $U$ be the set of users and $B$ the set of books on goodreads. We will construct an undirected bipartite graph $G(V, E)$ using these two sets where $V ~=~ U \cup B$ and $E~=~U \times B$. An edge exists between a vertex $u_i \in U$ and a vertex $b_k \in B$ if a user $u_i$ has read book $b_k$.\\\\
 We consider the rating given by a user $u_i$ to a book $b_k$ to assign weight to the edge between them. The weight to this edge plays an important role in the semantics of the network. Consider a scenario wherein a book $b_k$ is read by both the users $u_i$ and $u_j$. Suppose user $u_i$ has liked the book and hence has positively rated the book whereas user $u_j$ has not liked the book and so has given a low rating to the book. If we do not take this fact into the account, then these users might end up being placed in a same reading group. So as to prevent this situation, we assign weight to the edges in $G$. Let $r_{ik}$ be the rating given by user $u_i$ to book $b_k$. Let $w \rightarrow E \times \{1, -1\}$ be the weight function.\\
 $\forall (i, k) \in E$, 
 \[
@@ -124,6 +124,7 @@ Also, we  can only query a user data if the profile is public. Based on our init
 \item Analyse and interpret the results of applying these algorithms on the data
 \item Compare the communities detected by our work with the actual groups present on goodreads
 \item Study the effect of recommendations and users' friend on his/her choice of books (If time permits)
+\end{itemize}
 
 
 % http://networkx.github.io/documentation/networkx-1.9.1/reference/generated/networkx.algorithms.cluster.clustering.html?highlight=clustering#networkx.algorithms.cluster.clustering
@@ -152,9 +153,8 @@ In addition, if we get time, we can also look at how the recommendations and fri
 
 \section{Success Measures}
 
-Our entire work depends on acquiring the data in a short amount of time. We consider we validate this part if we manage to gather at least one million users with all their features (friends, books owned, followers, users following\dots) stored.\\
-Then, we will evaluate our clustering algorithm by studying by hand the communities formed. We expect to see communities gathered around common literature tastes such as science-fiction, romance or detective novels. 
-
+Our entire work depends on acquiring the data in a short amount of time. We aim to gather at least one million users with all their features (friends, books owned, followers, users following\dots) stored in the datastore.\\
+Then, we will evaluate our clustering algorithm by studying by hand the communities formed. We expect to see communities gathered around common literary tastes such as science-fiction, romance or detective novels. 
 
 \section{Project Plan}
 \begin{itemize}
@@ -170,7 +170,7 @@ The deliverables will be composed of a commented and tested code that will:
 \begin{itemize}
 \item Query the Goodreads API
 \item Store the data in a database
-\item Implement the community clustering
+\item Implement the community detection algorithm
 \item Apply the algorithm to goodreads data
 \end{itemize}
 

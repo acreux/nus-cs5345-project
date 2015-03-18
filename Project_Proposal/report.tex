@@ -26,7 +26,12 @@ Goodreads is a website launched in early 2007, which lets ``people find and shar
 Goodreads provides a multitude of features to its users. It goes beyond the traditional rating and reviewing of books by allowing users to make friends and join and form reading groups based on their literary tastes. Users can not only see what their friends have read, but they can also meet new people with similar reading interests. They can make recommendations to friends , follow authors, track the books they are currently reading, have read and want to read. In addition, goodreads provides personalized recommendations to book readers by analyzing the user data. \\\\
 
 To capture the notion of similar interest among the users of goodreads  the concept of one-mode analyses of bipartite network data(also known as affiliation network in sociology terminology) can be used \cite{wasserman}.Such analyses use matrices derived from the affiliation matrix, $\mathcal{A}$, wherein actors are represented in rows and the events are represented in columns.\\
-Co-membership of actors $i$ and $j$ for an event $k$ is identified if the rows $a_i$ and $a_j$ both have 1 in the column ak . Hence,  $a_{ik} = 1$ and $a_{jk} = 1$ indicates that both actors participated in the event $k$. So, the total number of co-memberships for the two actors can be computed from the number of times that $a_{ik} = 1$ and $a_{jk} = 1$ where $k$ takes all possible values. The number of events with which both actors $i$ and $j$ are associated will vary from  0(if both have no affiliated events in common) to $h$(if both have all affiliated events in common).\\\\
+
+Co-membership of actors $i$ and $j$ for an event $k$ is identified if the rows $a_i$ and $a_j$ both have non-zero entries in the column $k$ . So, the total number of co-memberships for the two actors can be computed by summing over all possible events for the respective actors. Such a one mode analyses reduces to the multiplication $\mathcal{A}\mathcal{A}^{T}$. We want to explore communities in the graph obtained in this way.\\\\
+
+Community detection is widely discussed topic in the social networking literature\footnote{Social networks are generally sparse networks. When the networks are dense, the community detection does not seem to be the wise option. The dense networks possess large number of inter-community edges which yields poor partitioning. For dense networks, discrete data analysis techniques are used.}. There is no universally accepted definition of community as the idea of community is pertinent to the underlying network. The general picture of community detection algorithm relies on the quality function which defines the quality of the cluster. The algorithm aims at either maximizing or minimizing(depends on the way quality function has been defined) cumulative quality of the network. Generally the quality function for a community is defined to be the difference between intra-community edges and inter-community edges. \\\\
+
+There are different classes of community detection algorithms. Graph partitioning algorithms return two partitions of the network using techniques like max flow min cut, conductance, etc. Despite their scalability, these algorithms require the analyst to have some idea about the groups in the network beforehand. So they are not good for the exploration of the groups in the community. Similarly partition clustering algorithms, like k-means clustering, needs analyst conjecture about the existence of clusters. These algorithms also require the graph to be embedded in the metric space to quantify the notion of the distance. Spectral clustering algorithms reuqire eigenvalue decomposition of the network graph which is prohibitive for massive networks. Hierarchical partitioning techniques, comprising of agglomerative and divisive partitioning methods, are good for the exploratory analysis. Agglomerative clustering techniques are computationally expensive. 
 
 \section{Problem Description}
 In this project, we aim to probe the groups of users within goodreads based on their reading interests. As stated earlier, goodreads is more than just a book reviewing website. Users and authors on goodreads can connect amongst themselves forming a rich social network. We do not want to observe the groups/clusters within such a social network, which already exists in goodreads, since this network may not necessarily capture the reading interests of the users in it. We use the information about the books to capture the ties amongst the users. \\\\
@@ -47,9 +52,34 @@ Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying g
 \section{Underlying Assumptions}
 \section{Requirements}
 
-Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they gathered and we think that their data acquisition is wrongly implemented based on erroneous assumptions.
+Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user_id. They then decided to query for user_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
+
+We have decided to query the data using other APIs, available at \cite{goodreads:api}:
+\begin{itemize}
+\item group.list - List groups for a given user
+\item group.members - Return members of a particular group
+\item group.show - Get info about a group
+\item fanship.show - Show author fanship information
+\item owned_books.list - List books owned by a user
+\item shelves.list - Get shelves owned by a user
+\item user.show - Get shelves owned by a user
+\item user.followers - Get user's followers
+
+Here, we can see that 4 user networks can be generated:
+\begin{itemize}
+\item based on the followed-follower relationship between two users, we can build a user network named the Twitter Network
+\item based on the groups a user is a member of, we can build a user network named Group Network
+\item based on the authors a user is fan of, we can build a user named Author Network
+\item based on the books a user has read, we can build a user network named Book Network
+\end{itemize}
+
+The first goal here is to gather a relatively acceptable amount of data.
+
 
 \section{Project Objectives}
+The first objective is to query all the data.
+
+
 \section{Proposed Contributions}
 \section{Success Measures}
 \section{Project Plan}

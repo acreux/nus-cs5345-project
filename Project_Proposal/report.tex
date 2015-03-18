@@ -13,7 +13,9 @@
 
 
 \title{\textbf{CS5232 Project Proposal\\} }
-\author{Antoine Francois Pascal Creux (A0123427M)}
+\author{Akanksha Tiwari (A0123476E) \\
+Antoine Francois Pascal Creux (A0123427M)\\
+Ashish Dandekar (A0123873A)}
 \date{March 18th, 2014}
 
 \begin{document}
@@ -71,8 +73,7 @@ Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying g
 Goodreads data set is not available online and  we will have to acquire all the data through their APIs. Hence, as of now, it is not feasible to state appropriate assumptions since we do not have an exact picture of the data. Once we have obtained all the data we will update this section.
 
 \section{Data acquisition}
-
-Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.
+Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied the Goodreads platform by building a product recommendation system for it\cite{stanford:goodreads}. They acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads does not list every user\_id. So, they decided to query for user\_id randomly to query the books people have put in their public ‘reading' shelves. They gathered data for 4000 users and their 'reading books'.
 
 We have decided to query the data using other APIs, available at \cite{goodreads:api}:
 \begin{itemize}
@@ -88,19 +89,18 @@ We have decided to query the data using other APIs, available at \cite{goodreads
 \item user.friends - Get people a user is following
 \end{itemize}
 
-Here, we see we can add many kinds of information related to the network of a user:
+Through these APIs we get information related to the network of a user such as :
 \begin{itemize}
-\item such as in Twitter, a user can follow other users, and can be followed
-\item a user can take part in reading groups
-\item a user can be fan of an author
-\item we have all books stored in all shelves of a user
-\item we have all friends of a user
+\item the users followed by a user and the users who follow him (similar to twitter)
+\item the reading groups joined by a user
+\item the authors who's fan the user is
+\item the books stored in the shelves of a user
+\item all the friends of a user
 \end{itemize}
 
-Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worldwide).
-Based on the top users, we have a list of user\_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is fan of and the groups the user belongs to.\
-Finally, we only can query a user data if the profile is public. Based on our first study, most profile are public and thus should not raise an issue. Even so, we will store the information that a user profile is private.
-
+Goodreads has 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provides the top users in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers as well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worldwide).
+Based on the top users, we will have a list of user\_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is a fan of and the groups the user belongs to.\
+Also, we  can only query a user data if the profile is public. Based on our initial investigation, most profiles are public and thus this  should not be an issue. However, we will store the information that a user profile is private as well.
 
 \section{Project Objectives}
 
@@ -162,6 +162,8 @@ The deliverables will be composed of a commented and tested code that will:
 \end{itemize}
 
 Also, a deep study of the results of the algorithm will be conducted through comments and illustrations.
+
+\newpage
 
 \bibliographystyle{abbrv}
 \bibliography{references}

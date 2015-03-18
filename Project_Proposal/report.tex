@@ -63,6 +63,9 @@ Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying g
 
 
 \section{Underlying Assumptions}
+
+Goodreads data set is not available online and  we will have to acquire all the data through their APIs. Hence, as of now, it is not feasible to state appropriate assumptions since we do not have an exact picture of the data. Once we have obtained all the data we will update this section.
+
 \section{Data acquisition}
 
 Goodreads data is not available online, we have to acquire all data through their APIs. Stanford students have already studied Goodreads platform by building a product recommendation. \cite{stanford:goodreads}. However, they have not published the data they acquired and we think that their data acquisition is wrongly implemented based on erroneous assumptions. Indeed, they acquired data through the \textit{book.shelves} api method. Given a \textit{user\_id} and a bookshelf name, they were able to query all the books a user may have put in this virtual bookshelf. The major issue is that goodreads do not list every user\_id. They then decided to query for user\_id randomly to query the books people have put to their public `reading' shelve. Finally, they only gather 4000 users and their `reading books'.

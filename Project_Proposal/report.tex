@@ -31,7 +31,7 @@ Co-membership of actors $i$ and $j$ for an event $k$ is identified if the rows $
 
 Community detection is widely discussed topic in the social networking literature\footnote{Social networks are generally sparse networks. When the networks are dense, the community detection does not seem to be the wise option. The dense networks possess large number of inter-community edges which yields poor partitioning. For dense networks, discrete data analysis techniques are used.}. There is no universally accepted definition of community as the idea of community is pertinent to the underlying network. The general picture of community detection algorithm relies on the quality function which defines the quality of the cluster. The algorithm aims at either maximizing or minimizing(depends on the way quality function has been defined) cumulative quality of the network. Generally the quality function for a community is defined to be the difference between intra-community edges and inter-community edges. \\\\
 
-There are different classes of community detection algorithms. Graph partitioning algorithms return two partitions of the network using techniques like max flow min cut, conductance, etc. Despite their scalability, these algorithms require the analyst to have some idea about the groups in the network beforehand. So they are not good for the exploration of the groups in the community. Similarly partition clustering algorithms, like k-means clustering, needs analyst conjecture about the existence of clusters. These algorithms also require the graph to be embedded in the metric space to quantify the notion of the distance. Spectral clustering algorithms reuqire eigenvalue decomposition of the network graph which is prohibitive for massive networks. Hierarchical partitioning techniques, comprising of agglomerative and divisive partitioning methods, are good for the exploratory analysis. Agglomerative clustering techniques are computationally expensive. 
+There are different classes of community detection algorithms. Graph partitioning algorithms return two partitions of the network using techniques like max-flow min-cut, conductance, etc. Despite their scalability, these algorithms require the analyst to have some idea about the groups in the network beforehand. So they are not good for the exploration of the groups in the community. Similarly partition clustering algorithms, like k-means clustering, needs analyst conjecture about the existence of clusters. These algorithms also require the graph to be embedded in the metric space to quantify the notion of the distance. Spectral clustering algorithms reuqire eigenvalue decomposition of the network graph which is prohibitive for massive networks. Hierarchical partitioning techniques, comprising of agglomerative and divisive partitioning methods, are good for the exploratory analysis. Agglomerative clustering techniques are computationally expensive. Divisive algorithms are top-down partitioning techniques which goes on deleting edges one by one which causes formation of communities. Girvan-Newman algorithm is one of the popular divisive community detection algorithm which we poropose to use for detecting user communities in goodreads.
 
 
 \section{Problem Description}
@@ -58,6 +58,7 @@ $\forall (i, k) \in F=U \cup G$,
 		\end{array}\right.
 \]
 \\\\
+
 Let $\mathcal{M}$ be a $|U| \times |B|$ matrix which represents the underlying graph $G$. If there exists an edge between user $u_i$ and book $b_k$ then $\mathcal{M}_{ik}^{th}$ entry in the matrix is set to the weight of the corresponding edge otherwise the entry is set to zero. We obtain $\mathcal{U}$, matrix encoding the relationship amongst the users, using $\mathcal{M}$ by calculating $\mathcal{M}\mathcal{M}^{T}$. The graph encoded by $\mathcal{U}$ is the graph of the interest for finding the user groups. We propose to explore the interesting user groups by using graph partitioning algorithms like Girvan-Newmann algorithm.
 
 
@@ -89,7 +90,7 @@ Here, we see we can add many kinds of information related to the network of a us
 \item we have all friends of a user
 \end{itemize}
 
-Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worlwide).
+Goodreads have 30 million users which may be too large for our study, but the goal is to gather an acceptable amount of data. Goodreads provide the top user in certain categories such as the top 50 active users, top 50 readers, top 50 most popular reviewers well as the best reviews. These statistics are computed for the last week, last month, last 12 months and all the time for each country( as well as worldwide).
 Based on the top users, we have a list of user\_id from which we can query the data. On the other hand, for each user, we will store the books read and stored on the shelves, the authors the user is fan of and the groups the user belongs to.\
 Finally, we only can query a user data if the profile is public. Based on our first study, most profile are public and thus should not raise an issue. Even so, we will store the information that a user profile is private.
 
@@ -104,33 +105,6 @@ Based on the large information we can have on a user, we can generate several ki
 \item a Book network, as having read the same books show similar tastes in literature
 \item a Friend network, already implemented in goodreads
 \end{itemize}
-
-\section{Literature review}
-\label{sec:literature_review}
-We compare n methods for the clustering of our dataset. We give a brief summary of the different clustering methods and state if these methods will be scalable to our own dataset.
-
-Quantitatively, clustering aims at assigning each data point to a cluster.
-
-
-
-\subsection{Hierarchical Clustering}
-Hierarchical clustering builds a hierarchy of clusters, Either it is built \emph{bottom up}, as we start with the same numbers of clusters and data points, and we try to group clusters with each other. The \emph{top down} us the opposite: we start with a unique cluster that we are going to split recursevely.\\
-
-Complexity is very high ($\Theta$($n^3$)), and thus is not pertinent to big datasets, even if heuristics lower the complexity to ($\Theta$($n^2$).
-
-
-\subsection{K-Means Clustering}
-
-K-means clustering aims at computing k clusters from that will minimize the distance from the data points to the cluster, such as we will split n data points into k groups. It is a centroid-based clustering, and does not apply only to graphs.
-The most common application of k-means clustering is the iterative algorithm named Lloyd's algorithm.
-The major issue is that we have to set in advance the number of clusters we want to 
-
-\begin{enumerate}
-\item Initalize (randomly preferably) the center of the k clusters
-\item For each point, assign to it the closest cluster
-\item Compute the new position of every cluster as the center of all data points assigned to this cluster
-\item Repeat 2 and 3 until the clusters do not move (Relative to a $\epsilon$ for instance)
-\end{enumerate}
 
 
 % http://networkx.github.io/documentation/networkx-1.9.1/reference/generated/networkx.algorithms.cluster.clustering.html?highlight=clustering#networkx.algorithms.cluster.clustering
@@ -154,7 +128,7 @@ The major issue is that we have to set in advance the number of clusters we want
 \section{Success Measures}
 
 Our entire work depends on acquiring the data in a short amount of time. We consider we validate this part if we manage to gather at least one million users with all their features (friends, books owned, followers, users following\dots) stored.\\
-Then, we will implement a clustering algorithm presented in section \ref{sec:literature_review} that we will try to apply.
+% Then, we will implement a clustering algorithm presented in section \ref{sec:literature_review} that we will try to apply.
 
 
 \section{Project Plan}

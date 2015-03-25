@@ -24,3 +24,4 @@
 *.fdb_latexmk
 assignment.pdf
 report.pdf
+.cache

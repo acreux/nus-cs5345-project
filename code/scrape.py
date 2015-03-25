@@ -1,21 +1,25 @@
-import goodreads
+from pygoodreads.base import GoodreadsSession
+
+class Scrape(object):
+
+    def __init__(self):
+        self.session = GoodreadsSession(config_file="goodreads.cfg")
+        self.session.connect()
+
+    def rating_gen(self, group_id):
+        all_members = self.session.all_group_members(group_id)
+        for member in all_members:
+            member_id = member['id']['#text']
+            for review in self.session.review_list_all(member_id):
+                yield member_id, review['book']['id']['#text'], review['rating']
 
 
-def rating_gen(client_id, client_secret, group_id):
-    # c = goodreads.Client(client_id="C4VDKVDGbXYHqizAePFGg", client_secret="KDD6ZrT6820Z5vRlArDr8s0pI2PzlQVB9RY8SLm08")
-    c = goodreads.Client(client_id=client_id, client_secret=client_secret)
-    c.authenticate()
-    print "authenticated"
-    all_members = c.all_group_members(group_id)
-    for member in all_members:
-        member_id = member['id']['#text']
-        for review in c.review_list_all(member_id):
-            # print review
-            yield member_id, review['book']['id']['#text'], review['rating']
+    def scrape_group(self, group_id, filename):
+        # buffering=1 means flush at each line
+        with open(filename, 'a', buffering=1) as f:
+            for u, b, r in self.rating_gen(group_id):
+                f.write(';'.join([u, b, r]) + '\n')
 
-
-def scrape_group(client_id, client_secret, group_id, filename):
-    with open(filename, 'a') as f:
-        for u, b, r in rating_gen(client_id, client_secret, group_id):
-            f.write(';'.join([u, b, r]) + '\n')
-
+if __name__ == "__main__":
+    superman = Scrape()
+    superman.scrape_group(26989, "test1")

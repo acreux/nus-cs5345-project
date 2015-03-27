@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 import networkx as nx
+import sys
 
 class Bipartite:
 	def __init__(self, datafile = None, filetype = None):
@@ -20,12 +21,12 @@ class Bipartite:
 
 	def _loadFromRaw(self, datafile):
 		with open(datafile, "r") as f:
-			for line in datafile:
+			for line in f:
 				u, b, r = line.split(";")
 				if b <> "0000000000":
-					g.add_node(int(u), bipartite = 0, Type = "user")
-					g.add_node(int(b), bipartite = 1, Type = "book")
-					g.add_edge(int(u), int(b), weight = float(r))
+					self.g.add_node(int(u), bipartite = 0, Type = "user")
+					self.g.add_node(int(b), bipartite = 1, Type = "book")
+					self.g.add_edge(int(u), int(b), weight = float(r))
 
 
 	def _loadFromGDF(self, datafile):
@@ -37,15 +38,15 @@ class Bipartite:
 					except ValueError: break
 
 					if s_type == "user":
-						g.add_node(int(u), bipartite = 0, Type = s_Type)
+						self.g.add_node(int(u), bipartite = 0, Type = s_Type)
 					elif s_type == "book":
-						g.add_node(int(u), bipartite = 1, Type = s_Type)
+						self.g.add_node(int(u), bipartite = 1, Type = s_Type)
 
 				for line in datafile:
 					u, v, w = line.split(",")
-					g.add_edge(int(u), int(v), weight = float(w))
+					self.g.add_edge(int(u), int(v), weight = float(w))
 			else:
-				raise Error
+				raise TypeError
 
 	def dumpGDF(self, datafile):
 		'''
@@ -54,14 +55,31 @@ class Bipartite:
 		with open(datafile, "w") as f:
 			f.write("nodedef>name VARCHAR,type VARCHAR\n")
 			for i in self.g.nodes_iter():
-				f.write("%d\t%s\n" % (i, g.node[i]['Type']))
+				f.write("%d\t%s\n" % (i, self.g.node[i]['Type']))
 			f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
 			for i, j in self.g.edges_iter():
-				f.write("%d,%d,%f\n" % (i, j, g.edge[i][j]['weight']))
+				f.write("%d,%d,%f\n" % (i, j, self.g.edge[i][j]['weight']))
+
+	def loadGraph(self, graph):
+		self.g = graph
 
 	def projectUsers(self):
 		'''
 			Doesn't use the weight as expected
 			Has to be changed
 		'''
-		return nx.bipartite.weighted_projected_graph(g, self.Users)
+		return nx.bipartite.weighted_projected_graph(self.g, self.Users)
+
+if __name__ == "__main__":
+	g = Bipartite(sys.argv[1], "raw")
+	g.dumpGDF()
+
+	new = g.projectUsers()
+
+	with open("users.gdf", "w") as f:
+		f.write("nodedef>name VARCHAR,type VARCHAR\n")
+		for i in new.nodes_iter():
+			f.write("%d\n" % (i))
+		f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
+		for i, j in new.edges_iter():
+			f.write("%d,%d\n" % (i, j))

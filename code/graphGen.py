@@ -1,9 +1,10 @@
 #! /usr/bin/python
 
+from scipy.sparse import csr_matrix
 import networkx as nx
 import sys
 
-class Bipartite:
+class GoodreadsGraph:
 	def __init__(self, datafile = None, filetype = None):
 		self.g = nx.Graph()
 		self.Books = 0
@@ -18,9 +19,10 @@ class Bipartite:
 				raise TypeError
 
 		print nx.is_bipartite(self.g)
-		self.Users, self.Books = nx.bipartite.sets(self.g)
 
 	def _loadFromRaw(self, datafile):
+		U = set()
+		B = set()
 		with open(datafile, "r") as f:
 			for line in f:
 				u, b, r = line.split(";")
@@ -28,9 +30,14 @@ class Bipartite:
 					self.g.add_node("u" + u, bipartite = 0, Type = "user")
 					self.g.add_node("b" + b, bipartite = 1, Type = "book")
 					self.g.add_edge("u" + u, "b" + b, weight = float(r))
+					U.add("u" + u)
+					B.add("b" + b)
+		self.User, self.Books = list(U), list(B)
 
 
 	def _loadFromGDF(self, datafile):
+		U = set()
+		B = set()
 		with open(datafile, "r") as f:
 			line = f.readline()
 			if line.startswith("nodedef"):
@@ -40,14 +47,17 @@ class Bipartite:
 
 					if s_type == "user":
 						self.g.add_node("u" + u, bipartite = 0, Type = s_Type)
+						U.add("u" + u)
 					elif s_type == "book":
 						self.g.add_node("b" + u, bipartite = 1, Type = s_Type)
+						B.add("b" + u)
 
 				for line in datafile:
 					u, v, w = line.split(",")
 					self.g.add_edge("u" + u, "b" + v, weight = float(w))
 			else:
 				raise TypeError
+		self.User, self.Books = list(U), list(B)
 
 	def dumpGDF(self, datafile):
 		'''
@@ -69,18 +79,37 @@ class Bipartite:
 			Doesn't use the weight as expected
 			Has to be changed
 		'''
-		return nx.bipartite.weighted_projected_graph(self.g, self.Users)
+		R = []
+		C = []
+		D = []
+		for u, v in self.g.edges_iter():
+			if u.startswith('b'):
+				R.append(self.Users.index(v))
+				C.append(self.Books.index(u))
+			else:
+				R.append(self.Users.index(u))
+				C.append(self.Books.index(v))
+			D.append(self.g.edge[u][v]['weight'])
+
+		a = csr_matrix((D, (R, C)), shape = (len(self.Users), len(self.Books)))
+		users_mat =  a.dot(a.transpose())
+
+		g = nx.Graph()
+		r, c = users_mat.nonzero()
+		g.add_weighted_edges_from(zip(r, c, users_mat.data))
+
+		return g
 
 if __name__ == "__main__":
-	g = Bipartite(sys.argv[1], "raw")
+	g = GoodreadsGraph(sys.argv[1], "raw")
 	#g.dumpGDF()
 
-	new = g.projectUsers()
+	user_graph = g.projectUsers()
 
-	#with open("users.gdf", "w") as f:
-	#	f.write("nodedef>name VARCHAR,type VARCHAR\n")
-	#	for i in new.nodes_iter():
-	#		f.write("%d\n" % (i))
-	#	f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
-	#	for i, j in new.edges_iter():
-	#		f.write("%d,%d\n" % (i, j))
+	with open("users.gdf", "w") as f:
+		f.write("nodedef>name VARCHAR\n")
+		for i in user_graph.nodes_iter():
+			f.write("{}\n".format(g.Users[i]))
+		f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
+		for i, j in user_graph.edges_iter():
+			f.write("{},{},{}\n".format(g.Users[i], g.Users[j], user_graph[i][j]['weight']))

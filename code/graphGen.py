@@ -17,6 +17,7 @@ class Bipartite:
 			else:
 				raise TypeError
 
+		print nx.is_bipartite(self.g)
 		self.Users, self.Books = nx.bipartite.sets(self.g)
 
 	def _loadFromRaw(self, datafile):
@@ -24,9 +25,9 @@ class Bipartite:
 			for line in f:
 				u, b, r = line.split(";")
 				if b <> "0000000000":
-					self.g.add_node(int(u), bipartite = 0, Type = "user")
-					self.g.add_node(int(b), bipartite = 1, Type = "book")
-					self.g.add_edge(int(u), int(b), weight = float(r))
+					self.g.add_node("u" + u, bipartite = 0, Type = "user")
+					self.g.add_node("b" + b, bipartite = 1, Type = "book")
+					self.g.add_edge("u" + u, "b" + b, weight = float(r))
 
 
 	def _loadFromGDF(self, datafile):
@@ -38,13 +39,13 @@ class Bipartite:
 					except ValueError: break
 
 					if s_type == "user":
-						self.g.add_node(int(u), bipartite = 0, Type = s_Type)
+						self.g.add_node("u" + u, bipartite = 0, Type = s_Type)
 					elif s_type == "book":
-						self.g.add_node(int(u), bipartite = 1, Type = s_Type)
+						self.g.add_node("b" + u, bipartite = 1, Type = s_Type)
 
 				for line in datafile:
 					u, v, w = line.split(",")
-					self.g.add_edge(int(u), int(v), weight = float(w))
+					self.g.add_edge("u" + u, "b" + v, weight = float(w))
 			else:
 				raise TypeError
 
@@ -72,14 +73,14 @@ class Bipartite:
 
 if __name__ == "__main__":
 	g = Bipartite(sys.argv[1], "raw")
-	g.dumpGDF()
+	#g.dumpGDF()
 
 	new = g.projectUsers()
 
-	with open("users.gdf", "w") as f:
-		f.write("nodedef>name VARCHAR,type VARCHAR\n")
-		for i in new.nodes_iter():
-			f.write("%d\n" % (i))
-		f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
-		for i, j in new.edges_iter():
-			f.write("%d,%d\n" % (i, j))
+	#with open("users.gdf", "w") as f:
+	#	f.write("nodedef>name VARCHAR,type VARCHAR\n")
+	#	for i in new.nodes_iter():
+	#		f.write("%d\n" % (i))
+	#	f.write("edgedef>node1 VARCHAR, node2 VARCHAR, weight DOUBLE\n")
+	#	for i, j in new.edges_iter():
+	#		f.write("%d,%d\n" % (i, j))

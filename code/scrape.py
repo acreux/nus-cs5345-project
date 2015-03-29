@@ -4,22 +4,38 @@ from pygoodreads import GoodreadsSession, ProfilePrivateException, NotFoundProfi
 
 class Scrape(object):
 
-    SCRAPED_DATA = "data/test2"
-    FRIENDS_FILE = "data/test2_friends"
+    REGISTERED = "data/scraped"
+    FRIENDS = "data/scraped_friends"
     NOT_FOUND = "data/not_found"
     FORBIDDEN = "data/forbidden"
     EMPTY = "data/empty"
 
-    def __init__(self):
+    def __init__(self, group_id, min_page=1, max_page=10**9):
         self.session = GoodreadsSession(config_file="goodreads.cfg")
         self.session.connect()
         self._not_found = None
         self._forbidden = None
         self._registered = None
         self._empty = None
+        self.min_page = min_page
+        self.max_page = max_page
+        self.group_id = group_id
+        generate_file_name = lambda prefix: "_".join([prefix,
+                                                      str(self.group_id),
+                                                      str(self.min_page),
+                                                      str(self.max_page)])
+        # generate_file_name = lambda prefix: "_".join([prefix])
 
-    def rating_gen(self, group_id, min_page=1, max_page=10**9):
-        all_members = self.session.group_members_all(group_id, min_page, max_page)
+        self.not_found_file = generate_file_name(self.NOT_FOUND)
+        self.forbidden_file = generate_file_name(self.FORBIDDEN)
+        self.registered_file = generate_file_name(self.REGISTERED)
+        self.empty_file = generate_file_name(self.EMPTY)
+        self.friends_file = generate_file_name(self.FRIENDS)
+
+    def rating_gen(self):
+        all_members = self.session.group_members_all(self.group_id,
+                                                     self.min_page,
+                                                     self.max_page)
         for member in all_members:
             # 1 out 10, we don't move for 1 minute
             # if random.random() > 1:
@@ -29,7 +45,7 @@ class Scrape(object):
             member_id = member['id']['#text']
             is_visited = self.is_visited(str(member_id))
             if is_visited:
-                print member_id, "already ", is_visited
+                print member_id, "already ", is_visited, " ", self.min_page
                 continue
 
             try:
@@ -39,21 +55,21 @@ class Scrape(object):
                     review_count += 1
                 if review_count == 0:
                     yield "empty", member_id, "", ""
-                    print member_id, " empty"
+                    print member_id, " empty", " ", self.min_page
                 else:
                     self.scrape_friends(member_id)
                     self.registered.add(member_id)
-                    print member_id, " visited"
+                    print member_id, " visited", " ", self.min_page
 
             except ProfilePrivateException:
                 self.forbidden.add(member_id)
                 yield "forbidden", member_id, "", ""
-                print member_id, " forbidden"
+                print member_id, " forbidden", " ", self.min_page
 
             except NotFoundProfileException:
                 self.not_found.add(member_id)
                 yield "not_found", member_id, "", ""
-                print member_id, " not_found"
+                print member_id, " not_found", " ", self.min_page
             # except Exception as e:
             #     print e
             #     print "Exception raised for ", member_id
@@ -69,37 +85,36 @@ class Scrape(object):
             self.not_found.add(member_id)
 
     def scrape_friends(self, user_id):
-        with open(self.FRIENDS_FILE, "a", buffering=1) as f:
+        with open(self.friends_file, "a", buffering=1) as f:
             for line in self.friends_gen(user_id):
                 f.write(";".join(line) + "\n")
 
-    def scrape_group(self, group_id, min_page=1, max_page=10**9):
+    def scrape(self):
         lines_count = 0
         # buffering=1 means flush at each line
-        with open(self.SCRAPED_DATA, "a", buffering=1) as scraped,\
-             open(self.NOT_FOUND, "a", buffering=0) as not_found,\
-             open(self.FORBIDDEN, "a", buffering=0) as forbidden,\
-             open(self.EMPTY, "a", buffering=0) as empty:
-                        file_dict = {
-                            "good": scraped,
-                            "not_found": not_found,
-                            "empty": empty,
-                            "forbidden": forbidden}
-                        for status, user, book, rating in self.rating_gen(group_id,
-                                                                          min_page=min_page,
-                                                                          max_page=max_page):
-                            f = file_dict[status]
-                            if status == "good":
-                                f.write(';'.join([user, book, rating]) + '\n')
-                            else:
-                                f.write(user + ';')
+        with open(self.registered_file, "a", buffering=1) as scraped,\
+             open(self.not_found_file, "a", buffering=0) as not_found,\
+             open(self.forbidden_file, "a", buffering=0) as forbidden,\
+             open(self.empty_file, "a", buffering=0) as empty:
+            file_dict = {
+                "good": scraped,
+                "not_found": not_found,
+                "empty": empty,
+                "forbidden": forbidden}
+            for status, user, book, rating in self.rating_gen():
+                f = file_dict[status]
+                if status == "good":
+                    f.write(';'.join([user, book, rating]) + '\n')
+                else:
+                    f.write(user + ';')
+        print "Scrape: ", self.min_page, "-", self.max_page, " fini"
 
     @property
     def registered(self):
         """Member currently stored in file"""
         if not self._registered:
             try:
-                with open(self.SCRAPED_DATA) as f:
+                with open(self.registered_file) as f:
                     self._registered = set((line.split(";")[0] for line in f.readlines()))
             except IOError:
                 self._registered = set([])
@@ -109,7 +124,7 @@ class Scrape(object):
     def not_found(self):
         if not self._not_found:
             try:
-                with open(self.NOT_FOUND) as f:
+                with open(self.not_found_file) as f:
                     self._not_found = set((i for i in f.read().split(';') if i))
             except IOError:
                 self._not_found = set([])
@@ -119,7 +134,7 @@ class Scrape(object):
     def forbidden(self):
         if not self._forbidden:
             try:
-                with open(self.FORBIDDEN) as f:
+                with open(self.forbidden_file) as f:
                     self._forbidden = set((i for i in f.read().split(';') if i))
             except IOError:
                 self._forbidden = set([])
@@ -129,7 +144,7 @@ class Scrape(object):
     def empty(self):
         if not self._empty:
             try:
-                with open(self.EMPTY) as f:
+                with open(self.empty_file) as f:
                     self._empty = set((i for i in f.read().split(';') if i))
             except IOError:
                 self._empty = set([])
@@ -149,7 +164,9 @@ class Scrape(object):
 
 
 if __name__ == "__main__":
-    superman = Scrape()
-    # a = superman.friends_gen(26989)
-    superman.scrape_group(26989, min_page=112)
-
+    pass
+    # for i in range(100):
+    #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
+    #     superman.scrape()
+    # superman = Scrape(group_id=26989, min_page=660, max_page=666)
+    # superman.scrape()

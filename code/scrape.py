@@ -39,8 +39,7 @@ class Scrape(object):
     def read_set(self, filename):
         try:
             with open(filename) as f:
-                lines = (line.rstrip() for line in f)
-                return set(lines)
+                return set((line.rstrip() for line in f))
         except IOError:
             return set([])
 

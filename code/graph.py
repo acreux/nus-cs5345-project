@@ -57,7 +57,7 @@ class GoodreadsGraph(nx.Graph):
     def save(self, filename=None):
         """Save a graph using pickle"""
         file_name = filename or self.datafile+"_graph"
-        with open(filename, "wb") as f:
+        with open(file_name, "wb") as f:
             pickle.dump(self, f)
 
     @staticmethod
@@ -137,9 +137,9 @@ class GoodreadsGraph(nx.Graph):
         users_mat = self.users_matrix()
         r, c = users_mat.nonzero()
         g.add_weighted_edges_from(zip(r, c, users_mat.data))
-
-        with open(self.users_graph_name, "wb") as f:
-            pickle.dump(g, f)
+        return g
+        # with open(self.users_graph_name, "wb") as f:
+            # pickle.dump(g, f)
 
     def users_graph(self):
         return pickle.load(self.users_graph_name)

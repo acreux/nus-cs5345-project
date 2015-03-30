@@ -1,14 +1,18 @@
 from __future__ import with_statement
 import time, random, pickle
 from pygoodreads import GoodreadsSession, ProfilePrivateException, NotFoundProfileException
+import os
+
 
 class Scrape(object):
 
-    REGISTERED = "data/scraped"
-    FRIENDS = "data/scraped_friends"
-    NOT_FOUND = "data/not_found"
-    FORBIDDEN = "data/forbidden"
-    EMPTY = "data/empty"
+    FOLDER = 'data'
+
+    REGISTERED = "scraped"
+    FRIENDS = "friends"
+    NOT_FOUND = "not_found"
+    FORBIDDEN = "forbidden"
+    EMPTY = "empty"
 
     def __init__(self, group_id, min_page=1, max_page=10**9):
         self.session = GoodreadsSession(config_file="goodreads.cfg")
@@ -20,12 +24,20 @@ class Scrape(object):
         self.min_page = min_page
         self.max_page = max_page
         self.group_id = group_id
-        generate_file_name = lambda prefix: "_".join([prefix,
-                                                      str(self.group_id),
-                                                      str(self.min_page),
-                                                      str(self.max_page)])
+        generate_file_name = lambda prefix: os.path.join(self.FOLDER,
+                                                         str(self.group_id),
+                                                         "_".join([prefix,
+                                                                   str(self.group_id),
+                                                                   str(self.min_page),
+                                                                   str(self.max_page)]))
         # generate_file_name = lambda prefix: "_".join([prefix])
 
+        # From previous scraping
+        self.not_found_basic = os.path.join(self.FOLDER, self.NOT_FOUND)
+        self.forbidden_basic = os.path.join(self.FOLDER, self.FORBIDDEN)
+        self.empty_basic = os.path.join(self.FOLDER, self.EMPTY)
+
+        # New files created
         self.not_found_file = generate_file_name(self.NOT_FOUND)
         self.forbidden_file = generate_file_name(self.FORBIDDEN)
         self.registered_file = generate_file_name(self.REGISTERED)
@@ -106,7 +118,7 @@ class Scrape(object):
                 if status == "good":
                     f.write(';'.join([user, book, rating]) + '\n')
                 else:
-                    f.write(user + ';')
+                    f.write(user + '\n')
         print "Scrape: ", self.min_page, "-", self.max_page, " fini"
 
     @property
@@ -120,35 +132,31 @@ class Scrape(object):
                 self._registered = set([])
         return self._registered
 
-    @property
-    def not_found(self):
-        if not self._not_found:
-            try:
-                with open(self.not_found_file) as f:
-                    self._not_found = set((i for i in f.read().split(';') if i))
-            except IOError:
-                self._not_found = set([])
-        return self._not_found
+    def read_set(self, filename):
+        try:
+            with open(filename) as f:
+                lines = (line.rstrip() for line in f)
+                return set(lines)
+        except IOError:
+            return set([])
 
     @property
     def forbidden(self):
         if not self._forbidden:
-            try:
-                with open(self.forbidden_file) as f:
-                    self._forbidden = set((i for i in f.read().split(';') if i))
-            except IOError:
-                self._forbidden = set([])
+            self._forbidden = self.read_set(self.forbidden_basic) | self.read_set(self.forbidden_file)
         return self._forbidden
 
     @property
     def empty(self):
         if not self._empty:
-            try:
-                with open(self.empty_file) as f:
-                    self._empty = set((i for i in f.read().split(';') if i))
-            except IOError:
-                self._empty = set([])
+            self._empty = self.read_set(self.empty_basic) | self.read_set(self.empty_file)
         return self._empty
+
+    @property
+    def not_found(self):
+        if not self._not_found:
+            self._not_found = self.read_set(self.not_found_basic) | self.read_set(self.not_found_file)
+        return self._not_found
 
     def is_visited(self, user_id):
         if user_id in self.registered:
@@ -164,9 +172,11 @@ class Scrape(object):
 
 
 if __name__ == "__main__":
-    pass
     # for i in range(100):
     #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
     #     superman.scrape()
-    # superman = Scrape(group_id=26989, min_page=660, max_page=666)
+    superman = Scrape(group_id=26989, min_page=660, max_page=666)
+    # print len(superman.not_found)
+    print len(superman.forbidden)
+    # print len(superman.empty)
     # superman.scrape()

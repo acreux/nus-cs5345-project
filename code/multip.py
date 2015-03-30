@@ -24,19 +24,50 @@ def scrape(scrape_params):
 
 
 if __name__ == "__main__":
-    min_page = 667
-    page_batch = 2
-    with Tor(socks_port=7000) as t:
-        iterable = [
-            {
-                "group_id":26989,
-                "min_page":min_page + page_batch*i+1,
-                "max_page":min_page + page_batch*(i+1)}
-            for i in range(16)]
-        a = Multiprocessing(scrape)
-        a.do(iterable)
 
-    # scrape({
-    #         "group_id":26989,
+    page_batch = 20
+    group_id = 390
+    max_iter = 0
+    
+    min_page = 1
+    max_page = min_page + page_batch*(max_iter+1)-1
+    cpt = 0
+    while min_page<578:
+        cpt += 1
+        print cpt, max_page
+        
+        # with Tor(socks_port=7000) as t:
+        #     iterable = [
+        #         {"group_id":group_id,
+        #          "min_page":min_page + page_batch*i,
+        #          "max_page":min_page + page_batch*(i+1)-1}
+        #         for i in range(max_iter+1)]
+        #     a = Multiprocessing(scrape)
+        #     a.do(iterable)
+        # print cpt, max_page
+        
+        # iterable = [
+        #     {"group_id":group_id,
+        #      "min_page":min_page + page_batch*i,
+        #      "max_page":min_page + page_batch*(i+1)-1}
+        #     for i in range(max_iter+1)]
+        # a = Multiprocessing(scrape)
+        # a.do(iterable)
+
+        scrape({"group_id":group_id,
+             "min_page":min_page,
+             "max_page":min_page + page_batch-1})
+        min_page = max_page+1
+        max_page = min_page + page_batch*(max_iter+1)-1
+
+
+
+
+    # scrape({"group_id":group_id,
     #         "min_page":min_page + 50+1,
     #         "max_page":min_page + 50*(1+1)})
+    
+    # print max_page
+    # superman = Scrape(group_id, min_page=min_page, max_page=min_page+page_batch)
+    # print str(3770173) in superman.not_found
+    # # print superman.forbidden

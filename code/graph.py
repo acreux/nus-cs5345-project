@@ -116,9 +116,9 @@ class GoodreadsGraph(nx.Graph):
                             for node, node_dict in self.adjacency_iter()\
                             for neighbor, val in node_dict.iteritems() if node.startswith("u")]
         rows, columns, data = zip(*csr_generator)
-        a = csr_matrix((data, (rows, columns)), shape=(len(user_list), len(book_list)))
+        csr = csr_matrix((data, (rows, columns)), shape=(len(user_list), len(book_list)))
         with open(self.adjacency_matrix_name, "wb") as f:
-            pickle.dump(a, f)  
+            pickle.dump(csr, f)  
 
     def adjacency_csr(self):
         return GoodreadsGraph.load(self.adjacency_matrix_name)
@@ -135,6 +135,7 @@ class GoodreadsGraph(nx.Graph):
     def compute_users_graph(self):
         g = nx.Graph()
         users_mat = self.users_matrix()
+        
         r, c = users_mat.nonzero()
         g.add_weighted_edges_from(zip(r, c, users_mat.data))
         return g

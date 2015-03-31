@@ -192,11 +192,14 @@ class UserScrape(Scrape):
         self.input_file = os.path.join(self.FOLDER, self.user_file)
         self.output_file = os.path.join(self.FOLDER, self.user_file + "_output")
         self.forbidden_file = os.path.join(self.FOLDER, self.user_file + "_forbidden")
+        self.not_found_file = os.path.join(self.FOLDER, self.user_file + "_not_found")
         
         self._registered = None
         self._forbidden = None
+        self._not_found = None
 
         self.forbidden_basic = os.path.join(self.FOLDER, self.FORBIDDEN)
+        self.not_found_basic = os.path.join(self.FOLDER, self.NOT_FOUND)
 
     def member_gen(self):
         with open(self.input_file) as f:
@@ -220,16 +223,24 @@ class UserScrape(Scrape):
             except ProfilePrivateException:
                 yield "forbidden", member_id, "XXX", "XXX"
                 print member_id, " forbidden"
+            except ProfilePrivateException:
+                yield "not_found", member_id, "XXX", "XXX"
+                print member_id, " not_found"
 
     def scrape(self):
         # buffering=1 means flush at each line
         with open(self.output_file, "a", buffering=1) as scraped,\
-             open(self.forbidden_file, "a", buffering=0) as forbidden:
+             open(self.forbidden_file, "a", buffering=1) as forbidden,\
+             open(self.not_found_file, "a", buffering=1) as not_found:
             for status, user, book, rating in self.rating_gen(self.member_gen()):
-                if status == "good":
+                if "good" in status:
                     scraped.write(';'.join([user, book, rating]) + '\n')
-                else:
+                elif "forbidden" in status:
                     forbidden.write(user + '\n')
+                elif "not" in status:
+                    not_found.write(user + '\n')
+                else:
+                    raise Exception(status + " unknown")
 
     @property
     def registered(self):
@@ -254,9 +265,17 @@ class UserScrape(Scrape):
             self._forbidden = self.read_set(self.forbidden_basic) | self.read_set(self.forbidden_file)
         return self._forbidden
 
+    @property
+    def not_found(self):
+        if not self._not_found:
+            self._not_found = self.read_set(self.not_found_basic) | self.read_set(self.not_found_file)
+        return self._not_found
+
+
 if __name__ == "__main__":
-    # for i in range(100):
-    #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
-    #     superman.scrape()
-    superman = UserScrape(0)
+    pass
+    # for i in range(1, 101):
+    # #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
+    # #     superman.scrape()
+    superman = UserScrape(65)
     superman.scrape()

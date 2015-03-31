@@ -1,6 +1,6 @@
 import multiprocessing
 from tor import Tor
-from scrape import Scrape
+from scrape import Scrape, UserScrape
 
 
 class Multiprocessing(object):
@@ -23,18 +23,24 @@ def scrape(scrape_params):
     superman.scrape()
 
 
+def scrape_files(file_id):
+    print "start " + file_id
+    superman = UserScrape(file_id)
+    superman.scrape()
+
+
 if __name__ == "__main__":
 
-    page_batch = 20
-    group_id = 390
-    max_iter = 0
+    # page_batch = 20
+    # group_id = 390
+    # max_iter = 0
     
-    min_page = 1
-    max_page = min_page + page_batch*(max_iter+1)-1
-    cpt = 0
-    while min_page<578:
-        cpt += 1
-        print cpt, max_page
+    # min_page = 1
+    # max_page = min_page + page_batch*(max_iter+1)-1
+    # cpt = 0
+    # while min_page<578:
+    #     cpt += 1
+    #     print cpt, max_page
         
         # with Tor(socks_port=7000) as t:
         #     iterable = [
@@ -54,14 +60,17 @@ if __name__ == "__main__":
         # a = Multiprocessing(scrape)
         # a.do(iterable)
 
-        scrape({"group_id":group_id,
-             "min_page":min_page,
-             "max_page":min_page + page_batch-1})
-        min_page = max_page+1
-        max_page = min_page + page_batch*(max_iter+1)-1
+        # scrape({"group_id":group_id,
+        #      "min_page":min_page,
+        #      "max_page":min_page + page_batch-1})
+        # min_page = max_page+1
+        # max_page = min_page + page_batch*(max_iter+1)-1
 
 
-
+    for i in range(11):
+        iterable = range(50+5*i, 55+5*i)
+        a = Multiprocessing(scrape_files)
+        a.do(iterable)
 
     # scrape({"group_id":group_id,
     #         "min_page":min_page + 50+1,

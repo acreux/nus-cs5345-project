@@ -223,7 +223,7 @@ class UserScrape(Scrape):
             except ProfilePrivateException:
                 yield "forbidden", member_id, "XXX", "XXX"
                 print member_id, " forbidden"
-            except ProfilePrivateException:
+            except NotFoundProfileException:
                 yield "not_found", member_id, "XXX", "XXX"
                 print member_id, " not_found"
 
@@ -277,5 +277,5 @@ if __name__ == "__main__":
     # for i in range(1, 101):
     # #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
     # #     superman.scrape()
-    superman = UserScrape(65)
+    superman = UserScrape(53)
     superman.scrape()

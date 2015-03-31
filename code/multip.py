@@ -24,7 +24,7 @@ def scrape(scrape_params):
 
 
 def scrape_files(file_id):
-    print "start " + file_id
+    print "start " + str(file_id)
     superman = UserScrape(file_id)
     superman.scrape()
 

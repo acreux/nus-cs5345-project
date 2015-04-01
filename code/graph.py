@@ -5,6 +5,7 @@ import networkx as nx
 import sys
 from networkx.algorithms import bipartite
 import cPickle as pickle
+from itertools import izip
 
 
 class GoodreadsGraph(nx.Graph):
@@ -115,7 +116,7 @@ class GoodreadsGraph(nx.Graph):
         csr_generator = [(user_list.index(node), book_list.index(neighbor), val['weight'])\
                             for node, node_dict in self.adjacency_iter()\
                             for neighbor, val in node_dict.iteritems() if node.startswith("u")]
-        rows, columns, data = zip(*csr_generator)
+        rows, columns, data = izip(*csr_generator)
         csr = csr_matrix((data, (rows, columns)), shape=(len(user_list), len(book_list)))
         with open(self.adjacency_matrix_name, "wb") as f:
             pickle.dump(csr, f)  
@@ -137,10 +138,9 @@ class GoodreadsGraph(nx.Graph):
         users_mat = self.users_matrix()
         
         r, c = users_mat.nonzero()
-        g.add_weighted_edges_from(zip(r, c, users_mat.data))
-        return g
-        # with open(self.users_graph_name, "wb") as f:
-            # pickle.dump(g, f)
+        g.add_weighted_edges_from(izip(r, c, users_mat.data))
+        with open(self.users_graph_name, "wb") as f:
+            pickle.dump(g, f)
 
     def users_graph(self):
         return pickle.load(self.users_graph_name)

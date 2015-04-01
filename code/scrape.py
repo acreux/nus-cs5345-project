@@ -277,5 +277,6 @@ if __name__ == "__main__":
     # for i in range(1, 101):
     # #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
     # #     superman.scrape()
-    superman = UserScrape(53)
-    superman.scrape()
+    for i in range(70, 101):
+        superman = UserScrape(i)
+        superman.scrape()

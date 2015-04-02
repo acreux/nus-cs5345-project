@@ -66,10 +66,8 @@ We can retrieve the update information, aka user_id and rating given, by  parsin
 \end{itemize}
 \\
 
-We have decided to go with the group-based scraping.
+We have decided to use the group-based scraping.
 We are sure we will not get biased data, and using the friends, we should get enough data points to run the analysis.
-
-
 
 \section{Description of the method}
 % \section{Description of the method, algorithm, and/or method that is/are at the core of your project}
@@ -78,12 +76,24 @@ We are sure we will not get biased data, and using the friends, we should get en
 \section{Discussion of project progress}
 
 We have queried the first reading group entirely.
-What we did not take into account was the number of inutile user id we got.
-After the first pass, we got:
+The statistics computed based on this first scraping pass are:
 \begin{itemize}
-\item 7815 public profiles
 \item 567461 ratings
+\item 7815 public profiles
+\item 2564 private profiles
+\item 7203 profiles without a review
+\item 1948 profiles 
 \end{itemize}
+
+We did not know we would get so many fake or private profiles. Within a group of 20000 members, we got less than 8000 users.
+
+We decided to scrape all the friends of the users we have found to get more data. 
+Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.
+
+\\
+To accelerate the scraping, we used multiprocessing and we set up a Tor connection, even if we did not have used it. 
+While getting the last data, we focused on the algorithm part.
+
 
 
 % \section{Project plan for remaining/unfinished work items}

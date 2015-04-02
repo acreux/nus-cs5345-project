@@ -1,3 +1,5 @@
+\title{\textbf{\Huge Book-taste clustering in goodreads communities}}
+
 \author{{\Large Akanksha Tiwari (A0123476E)} \\
     {\Large Antoine Francois Pascal Creux (A0123427M)}\\
     {\Large Ashish Dandekar (A0123873A)} \\\\
@@ -62,9 +64,9 @@ We can select the genres whose number of reviews is the biggest, and retrieve th
 One complication was raised as there is no API that retrieves reviews from a book id.
 Anyway, a meticulous analysis of \textit{Javascript} call when browsing the goodreads Web pages show that requests are made to \textit{book/reviews/}.
 It is a \textit{Javascript} code that refresh the reviews elements of the HTML page.
-We can retrieve the update information, aka user_id and rating given, by  parsing the \textit{Javascript} callback using regular expressions.
+We can retrieve the update information, aka the user\_id and rating given, by parsing the \textit{Javascript} callback using regular expressions.
 \end{itemize}
-\\
+
 
 We have decided to use the group-based scraping.
 We are sure we will not get biased data, and using the friends, we should get enough data points to run the analysis.
@@ -74,6 +76,7 @@ We are sure we will not get biased data, and using the friends, we should get en
 
 
 \section{Discussion of project progress}
+\subsection{Data Collection}
 
 We have queried the first reading group entirely.
 The statistics computed based on this first scraping pass are:
@@ -88,22 +91,40 @@ The statistics computed based on this first scraping pass are:
 We did not know we would get so many fake or private profiles. Within a group of 20000 members, we got less than 8000 users.
 
 We decided to scrape all the friends of the users we have found to get more data. 
-Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.
+Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.\\
 
-\\
-To accelerate the scraping, we used multiprocessing and we set up a Tor connection, even if we did not have used it. 
-While getting the last data, we focused on the algorithm part.
+To accelerate the scraping, we use multiprocessing and we set up a Tor connection, even if we do not knwo we will used it.\\
+While getting the last data, we worked on the algorithm part.
 
+\subsection{Data processing}
 
+\subsection{Algorithm}
 
-% \section{Project plan for remaining/unfinished work items}
+We focus on the study of communities detection based on the user graph we have generated.
 
-% To capture the notion of similar interest among the users of goodreads  the concept of one-mode analyses of bipartite network data(also known as affiliation network in sociology terminology) can be used \cite{wasserman}. Such analyses use matrices derived from the affiliation matrix, $\mathcal{A}$, wherein actors are represented in rows and the events are represented in columns.
+The most common 
 
-% Co-membership of actors $i$ and $j$ for an event $k$ is identified if the rows $a_i$ and $a_j$ both have 1 in the column $k$ .
-% Hence,  $a_{ik}~=~1$ and $a_{jk}~=~1$ indicates that both actors participated in the event $k$. So, the total number of co-memberships for the two actors can be computed from the number of times that $a_{ik}~=~1$ and $a_{jk}~=~1$ where $k$ takes all possible values. The number of events with which both actors $i$ and $j$ are associated will vary from 0 (if both have no affiliated events in common) to $h$(if both have all affiliated events in common).\\
+Community detection is a widely discussed topic in the social networking literature\footnote{Social networks are generally sparse networks. When the networks are dense, the community detection does not seem to be a wise option. The dense networks possess large number of inter-community edges which yield poor partitioning. For dense networks, discrete data analysis techniques are used.}\cite{clauset}.
 
-% Community detection is a widely discussed topic in the social networking literature\footnote{Social networks are generally sparse networks. When the networks are dense, the community detection does not seem to be a wise option. The dense networks possess large number of inter-community edges which yield poor partitioning. For dense networks, discrete data analysis techniques are used.}\cite{clauset}.
+Based on the sample we have, the graph is very dense.
+With less than 8000 nodes, we have more than 16 million edges. The density is about ???.
+
+Based on \cite{mining_massive_dataset}, we wanted to test which community detection algorithm could be used.
+At first, we were supposed to use the Girvan-Newman algorithm as it was the most common community detection algorithm\cite{newman}.
+The Girvan–Newman algorithm uses an ``edge betweenness'' of an edge as the number of shortest paths between pairs of nodes that run along it.
+Edges with high betweeness are very likeyly the connection between communities.
+Thus, removing the edges in the decreasing order of between should reveal the dendogram associated, and thus the communities.
+This compute takes $O(ne)$ running time, and thus is too long for our graph.\\
+
+G-N can be limiting as any node has to be placed in one unique community.
+Since, we deal with a bipartite graph, we can we may try to find complete bipartite subgraphs.
+That means we can split the users and the books into two distinct sets respectively, such as $users0$ and $books0$, and $users1$ and $books1$ are linked, but no edge relate $users0$ and $books1$, or $users1$ and $books0$.
+Based on our graph density which is pretty high, we cannot apply this algorithm: we would a unique complete clique.
+However, we may filter the edges by for instance, keeping only the edges with a rating of 5.\\
+
+The Simrank method, where a random walker starts at one node, and is allowed to go through the edges is cannot also be applied to our dense graph.
+The similarity between each node is too time-consuming. 
+
 % There is no universally accepted definition of community since the idea of community is pertinent to the underlying network.
 % The general picture of community detection algorithm relies on the quality function which defines the quality of the cluster.
 % Algorithms aim at either maximizing or minimizing (depends on the way quality function has been defined) cumulative quality of the network.
@@ -119,6 +140,12 @@ While getting the last data, we focused on the algorithm part.
 % Hierarchical partitioning techniques, comprising of agglomerative and divisive partitioning methods, are good for exploratory analysis.
 % Agglomerative clustering techniques are computationally expensive. Divisive algorithms are top-down partitioning techniques which go on deleting edges one by one which causes formation of communities. Girvan-Newman algorithm is one of the most popular divisive community detection algorithm which we propose to use for detecting user communities in goodreads.
 
+% \section{Project plan for remaining/unfinished work items}
+
+% To capture the notion of similar interest among the users of goodreads  the concept of one-mode analyses of bipartite network data(also known as affiliation network in sociology terminology) can be used \cite{wasserman}. Such analyses use matrices derived from the affiliation matrix, $\mathcal{A}$, wherein actors are represented in rows and the events are represented in columns.
+
+% Co-membership of actors $i$ and $j$ for an event $k$ is identified if the rows $a_i$ and $a_j$ both have 1 in the column $k$ .
+% Hence,  $a_{ik}~=~1$ and $a_{jk}~=~1$ indicates that both actors participated in the event $k$. So, the total number of co-memberships for the two actors can be computed from the number of times that $a_{ik}~=~1$ and $a_{jk}~=~1$ where $k$ takes all possible values. The number of events with which both actors $i$ and $j$ are associated will vary from 0 (if both have no affiliated events in common) to $h$(if both have all affiliated events in common).\\
 
 % \section{Problem Description}
 % In this project, we aim to probe the groups of users within goodreads based on their reading interests. As stated earlier, goodreads is more than just a book reviewing website. Users and authors on goodreads can connect amongst themselves forming a rich social network. We do not want to observe the groups/clusters within such a social network, which already exists in goodreads, since this network may not necessarily capture the reading interests of the users in it. We will use the information about the books read by the users and ratings given by them to capture the ties amongst the users.\\

@@ -64,11 +64,11 @@ if __name__ == "__main__":
         #      "min_page":min_page,
         #      "max_page":min_page + page_batch-1})
         # min_page = max_page+1
-        # max_page = min_page + page_batch*(max_iter+1)-1
+        # max_page = min_page + page_bacdtch*(max_iter+1)-1
 
 
-    for i in range(9):
-        iterable = range(60+5*i, 65+5*i)
+    for i in range(1):
+        iterable = range(87+10*i, 100+10*i)
         a = Multiprocessing(scrape_files)
         a.do(iterable)
 

@@ -20,7 +20,7 @@
 % \usepackage[autolanguage]{numprint}
 
 \begin{document}
-\maketitle
+%\maketitle
 
 
 \section{Detailed Problem Description}
@@ -36,38 +36,19 @@ We wonder if communities based on book tastes are analogous to friends communiti
 \section{Related Work}
 
 
-\section{Description of data collection and pre-processing processes}
+\section{Data Acquisition}
 
-This task is very tedious as users dataset is not available online. Goodreads API is well documented and easily accessible.
-All we need is a developer key and an OAuth access to have access to all public profiles. Indeed, a goodreader can make its profile private and thus, only accessible from its friends. Given that goodreads users database being huge, we hopefully have enough public profile to run our analysis.
-
-The data scraping is laborious and time consuming, but its execution is vital in our study. Besides, a biased and wrongly data scraping may take a lot of time and return fragment and unusable data.
-The main issue is how we can get enough data while keeping it unbiased.
-Random issues can be queried but first sample of reviews show that no reviews were sharing the same reader or the same book.
-All reviews written by a goodreader is available by using the API point \textit{owned\_books.list} while we cannot retrieve all reviews from a book.
-
-
-We figured out two ways to collect the data:
-\begin{itemize}
-\item Retrieve users id from a group.\newline
-Goodreads enables virtual groups where people share similar interests or just get along with each other.
-Some groups are around a specific journal while others just give to all members a reading schedule so that everyone can share its opinions with this group.
-One of the biggest group is Goodreads Authors/Readers.
-According to goodreads, this group is dedicated to connecting readers with Goodreads authors.
-It is divided by genres, and includes folders for writing resources, book websites, videos/trailers, and blogs.
-Thus, we can query all the members, and then use their first connection to get more users while keeping our dataset unbiased.
-\item Retrieve users id from reviews of books.\newline
-All the book genres are available at \ref{goodreads:genres}.
-We can select the genres whose number of reviews is the biggest, and retrieve the reviews from the best-sellers of each top category.
-One complication was raised as there is no API that retrieves reviews from a book id.
-Anyway, a meticulous analysis of \textit{Javascript} call when browsing the goodreads Web pages show that requests are made to \textit{book/reviews/}.
-It is a \textit{Javascript} code that refresh the reviews elements of the HTML page.
-We can retrieve the update information, aka user_id and rating given, by  parsing the \textit{Javascript} callback using regular expressions.
-\end{itemize}
-\\
-
-We have decided to use the group-based scraping.
-We are sure we will not get biased data, and using the friends, we should get enough data points to run the analysis.
+Goodread provides well documented and publically accessible API to query various features supported by the website. All we need is a developer key, which one gets after signing up on goodreads, and an OAuth access to use numerous APIs. The data of the users on a website, being the concern of privacy, is not readily available by means of goodread APIs. Aside from this a goodread user has liberty to keep his/her profile private making it accessible only to the friends on goodreads. Given the large userbase of goodreads, we hope to get sizeable dataset to run our analysis.\\\\
+Althought the data scraping is laborious and time consuming, its is vital in our study. For a fair study, the data must be unbiased. The method which we use to gather the data may add some bias to it. So selection of scraping method is critical to data acquisition. There are two ways one can collect the data:
+\begin{description}
+\item[Retrieve User IDs from a group]
+Goodreads hosts various reading groups catered to various genres and reading interests. User can become member of such groups or can initiate a group. In a group reading activities are supported wherein members can schedule the book readings so that they can share their opinions and conduct a healthy conversation. {\it Goodreads Authors/Readers} is one of the major groups on goodreads.  According to goodreads, this group is dedicated to connecting readers with goodreads authors. It is divided by genres, and includes folders for writing resources, book websites, videos/trailers, and blogs. \\
+Goodreads provides an API to get the list of users given the ID of the group. One can get the ID of the group from the URL of the corresponding group on goodreads.
+\item[Retrieve User IDs from reviews of books]
+The list of various books genres is available at \ref{goodreads:genres}. One can select top rated books from the highly reviewed genres. So this collection of ``best-selling'' books forms a base set for the books. So we can get the list of users who have read these books. But goodreads fails to support an API which retrieves reviews for a particular book given its ID. Despite this, a meticulous analysis of \textit{Javascript} calls, the webpage makes to show the reviews of a book to the user, reveals a bacdoor API \textit{book/reviews/}. We can retrieve user realted information User ID and the rating by parsing the response to the \textit{Javascript} callback using regular expressions.
+\end{description}
+The list of User IDs thus scraped serve as a base user set. We later collect {\it 1-neighbourhood} of this set of users, namely friends of them and the books read by these friends, to get a substantial dataset.  \\
+We have decided to go with the first strategy. By scraping a toy dataset, we observe the data to be unbiased. Plus the data related to the friends assures the sizeable amount for the analysis.
 
 \section{Description of the method}
 % \section{Description of the method, algorithm, and/or method that is/are at the core of your project}
@@ -88,9 +69,7 @@ The statistics computed based on this first scraping pass are:
 We did not know we would get so many fake or private profiles. Within a group of 20000 members, we got less than 8000 users.
 
 We decided to scrape all the friends of the users we have found to get more data. 
-Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.
-
-\\
+Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.  \\
 To accelerate the scraping, we used multiprocessing and we set up a Tor connection, even if we did not have used it. 
 While getting the last data, we focused on the algorithm part.
 

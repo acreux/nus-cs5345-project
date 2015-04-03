@@ -58,26 +58,24 @@ We have decided to go with the first strategy. By scraping a toy dataset, we obs
 
 \section{Discussion of project progress}
 \subsection{Data Collection}
-
-We have queried the first reading group entirely.
-The statistics computed based on this first scraping pass are:
-\begin{itemize}
-\item 567461 ratings
-\item 7815 public profiles
-\item 2564 private profiles
-\item 7203 profiles without a review
-\item 1948 profiles 
-\end{itemize}
-
-We did not know we would get so many fake or private profiles. Within a group of 20000 members, we got less than 8000 users.
-
-We decided to scrape all the friends of the users we have found to get more data. 
-Among those 128213 friends, we have removed the profiles already in the group, which are private or do not have any review to store a list of 95503 active profiles who have likely written more than 5 million ratings.\\
-
-To accelerate the scraping, we use multiprocessing and we set up a Tor connection, even if we do not knwo we will used it.\\
-While getting the last data, we worked on the algorithm part.
-
+Table \ref{crawl_stat} shows the statistic of the group {\it Goodreads Authors/Users}. As stated earlier, it has been observed that many users have kept their profiles private. The users who have not reviewed a single book are of no use for the analysis. So, filtering these users leaves behind a base user set with size close to 8000.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{cc}
+\hline
+\#Ratings                  & 567461 \\ \hline
+\#Public Profiles          & 7815   \\ \hline
+\#Private Profiles         & 2564   \\ \hline
+\#Profiles w/o any reviews & 7203   \\ \hline
+\end{tabular}
+\label{crawl_stat}
+\caption{Goodreads Authors/Users Statistics}
+\end{center}
+\end{table}
+To gather a substantial set of users, we collect the friends of the base users. Again, we filter the friends who are already in the group, who have kept their profiles private and the ones who have not reviewd a single book. Following this strategy, we have a consolidated list of 95503 users which will be the user base for out analysis. \\
+The code for scraping is available at {\it https://github.com/acreux/nus-cs5345-project/tree/dev}. For d
 \subsection{Data processing}
+
 
 \subsection{Algorithm}
 

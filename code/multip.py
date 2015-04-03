@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
 
     for i in range(1):
-        iterable = range(87+10*i, 100+10*i)
+        iterable = range(350, 600)
         a = Multiprocessing(scrape_files)
         a.do(iterable)
 

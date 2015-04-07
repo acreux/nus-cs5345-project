@@ -194,9 +194,12 @@ class UserScrape(Scrape):
         self.forbidden_file = os.path.join(self.FOLDER, self.user_file + "_forbidden")
         self.not_found_file = os.path.join(self.FOLDER, self.user_file + "_not_found")
         
+        self.friends_file = os.path.join(self.FOLDER, self.user_file + "_friends")
+        
         self._registered = None
         self._forbidden = None
         self._not_found = None
+        self._friends_registered = None
 
         self.forbidden_basic = os.path.join(self.FOLDER, self.FORBIDDEN)
         self.not_found_basic = os.path.join(self.FOLDER, self.NOT_FOUND)
@@ -242,6 +245,28 @@ class UserScrape(Scrape):
                 else:
                     raise Exception(status + " unknown")
 
+    def friends_gen(self, user_id_gen):
+        for user_id in user_id_gen:
+            is_visited = self.is_visited_friends(str(user_id))
+            if is_visited:
+                print user_id, "already ", is_visited
+                continue
+
+            all_friends = self.session.friends_all(user_id)
+            try:
+                for friend in all_friends:
+                    yield user_id, friend['id'], friend['friends_count'], friend['reviews_count']
+            except ProfilePrivateException:
+                self.forbidden.add(user_id)
+            except NotFoundProfileException:
+                self.not_found.add(user_id)
+
+    def scrape_friends(self):
+        # buffering=1 means flush at each line
+        with open(self.friends_file, "a", buffering=1) as friends_file:
+            for line in self.friends_gen(self.member_gen()):
+                friends_file.write(";".join(line) + "\n")
+
     @property
     def registered(self):
         """Member currently stored in file"""
@@ -258,6 +283,23 @@ class UserScrape(Scrape):
             return "registered"
         else:
             return None
+
+    def is_visited_friends(self, user_id):
+        if user_id in self.friends_registered:
+            return "friends registered"
+        else:
+            return None
+
+    @property
+    def friends_registered(self):
+        """Friends already retrieved currently stored in file"""
+        if not self._friends_registered:
+            try:
+                with open(self.friends_file) as f:
+                    self._friends_registered = set((line.split(";")[0] for line in f.readlines()))
+            except IOError:
+                self._friends_registered = set([])
+        return self._friends_registered
 
     @property
     def forbidden(self):
@@ -277,6 +319,8 @@ if __name__ == "__main__":
     # for i in range(1, 101):
     # #     superman = Scrape(group_id=26989, min_page=329 + i*20, max_page=329 + (i+1)*20 - 1)
     # #     superman.scrape()
-    for i in range(70, 101):
-        superman = UserScrape(i)
-        superman.scrape()
+    # for i in range(70, 101):
+    #     superman = UserScrape(i)
+    #     superman.scrape_friends()
+    superman = UserScrape(1)
+    superman.scrape_friends()

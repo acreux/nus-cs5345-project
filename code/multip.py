@@ -26,10 +26,14 @@ def scrape(scrape_params):
 def scrape_files(file_id):
     print "start " + str(file_id)
     superman = UserScrape(file_id)
-    superman.scrape()
+    # superman.scrape()
+    superman.scrape_friends()
+
 
 
 if __name__ == "__main__":
+
+
 
     # page_batch = 20
     # group_id = 390
@@ -67,10 +71,11 @@ if __name__ == "__main__":
         # max_page = min_page + page_bacdtch*(max_iter+1)-1
 
 
-    for i in range(1):
-        iterable = range(350, 600)
+    for i in range(0, 1000, 50):
+        iterable = range(i, i+49)
         a = Multiprocessing(scrape_files)
         a.do(iterable)
+    # scrape_files(955)
 
     # scrape({"group_id":group_id,
     #         "min_page":min_page + 50+1,

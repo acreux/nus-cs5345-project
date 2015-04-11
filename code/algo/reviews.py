@@ -8,6 +8,7 @@ from operator import itemgetter
 
 
 class Reviews(object):
+    """Class handling reviews"""
 
     def __init__(self):
         self._book_to_user = None
@@ -30,7 +31,7 @@ class Reviews(object):
         with open(filename, "wb") as f:
             pickle.dump(self.user_to_book, f)
 
-    def _generate_user_to_book(self, filename="reviews.csv"):
+    def _generate_user_to_book(self, filename="test1.csv"):
         user_to_book = defaultdict(set)
         with open(filename, "r") as f:
             for line in f:
@@ -72,7 +73,7 @@ class Reviews(object):
             self._book_to_user = self._generate_book_to_user()
         return self._book_to_user
 
-    def _generate_book_to_user(self, filename="reviews.csv"):
+    def _generate_book_to_user(self, filename="test1.csv"):
 
         book_to_user = defaultdict(set)
         with open(filename, "r") as f:
@@ -82,6 +83,25 @@ class Reviews(object):
         return book_to_user
 
     def user_to_user(self, reviews_filename="reviews.csv"):
+        threshold = 10
+        def score(l1, l2):
+            a = set(zip(*l1)[0])
+            if len(a) < threshold:
+                return 0
+            return len(a.intersection(zip(*l2)[0]))
+
+        U_T_B = self.user_to_book
+
+        print "users_books done"
+        i = 0
+        for u, v in combinations(U_T_B.keys(), 2):
+            i += 1
+            if not i % 10000000:
+                print i
+            if score(U_T_B[u], U_T_B[v]) >= threshold:
+                yield (u, v) 
+
+    def user_to_user_too_long(self, reviews_filename="reviews.csv"):
 
         def basic_score(rating1, rating2):
             """Score between two users. Only based on the ratings"""
@@ -102,20 +122,27 @@ class Reviews(object):
                 i = 0
                 for line in f:
                     i += 1
-                    if not i % 10**5:
+                    if not i % 10**1:
                         print i
                     book, user, rating = line.rstrip().split(";")
 
                     if book == last_book_id:
                         book_bucket.add((user, rating))
                     else:
+                        print last_book_id, " start"
                         for edge in mix(book_bucket): yield edge
+                        print last_book_id, " end"
                         last_book_id = book
-
-
                 else:
                     for edge in mix(book_bucket): yield edge
 
-        return heapq.nlargest(10, score_gen(), key=itemgetter(4))
+        return heapq.nlargest(1000, score_gen(), key=itemgetter(4))
 
+if __name__ == "__main__":
+    r = Reviews()
+    r.user_to_user()
 
+    i = 0
+    for _ in r.user_to_user():
+        if not i %  10**3:
+            print i

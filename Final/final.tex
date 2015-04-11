@@ -35,27 +35,54 @@ Our project aims  to detect and study goodreads communities based on the book ra
 \subsection{Assumptions}
 The users who have not provided any ratings for the books that they have read are considered as invalid users and we have eliminated them from our data set. This is because just having read the book does not indicate that the user has liked the book. We also need the rating he has given to the book to know whether he/she likes(high rating) or dislikes (low rating) the book he has read.\\\\
 
-\section{Statistics}
+
+
+\section{Related work}
+
+\section{Description of data collection and pre-processing}
+\label{sec:data_acquisition}
+
+% Goodread provides well documented and publicly accessible API to query various features supported by the website. All we need is a developer key, which one gets after signing up on goodreads, and an OAuth access to use numerous APIs. The data of the users on a website, being the concern of privacy, is not readily available by means of goodread APIs. Aside from this a goodread user has liberty to keep his/her profile private making it accessible only to the friends on goodreads. Given the large user-base of goodreads, we hope to get sizable dataset to run our analysis.\\\\
+% Although the data scraping is laborious and time consuming, its is vital in our study. For a fair study, the data must be unbiased. The method which we use to gather the data may add some bias to it. So selection of scraping method is critical to data acquisition. There are two ways one can collect the data:
+
+Even if Goodreads provides well documented and publicly accessible APIs, it is difficult to extract a sample of Goodreads data. For instance, Goodreads do not provide an effortless and unlimited access to reviews of a book.
+Anyhow, we have decided to use \emph{reading groups} to obtain a user sampling, representative of Goodreads data.
+Indeed, Goodreads hosts various reading groups catered to various genres and reading interests. User can become member of such groups or can initiate a group. In a group reading activities are supported wherein members can schedule the book readings so that they can share their opinions and conduct a healthy conversation. {\it Goodreads Authors/Readers} is one of the major groups on goodreads.  According to goodreads, this group is dedicated to connecting readers with goodreads authors. The description is vague and does not target a specific group of readers.
+% It is divided by genres, and includes folders for writing resources, book websites, videos/trailers, and blogs. \\
+
+This is why the members of this group serve as a base user set.
+Then, we just need to retrieve all the ratings writtent by this user set.
+To collect more users, and thus create a substantial dataset, we study the the {\it 1-neighbourhood} of this set of users, \emph{i.e.} their friends.\\
+At the end, we have scraped more than 80000 members including more than 1.5 million reviews.
+
+\subsection{Statistics}
+
+An overview of the goodreads data we have scraped is vital as it helps us understand and grasp insight of the data we are munging.
+As it is explained in section~\ref{sec:data_acquisition}, we has extracted our data in two steps:
+\begin{itemize}
+\item Members of the Goodreads Authors/Users
+\item Friends of the Goodreads Authors/Users members
+\end{itemize}
 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{ccc}
 \hline
-\                          &  Goodreads Authors/Users    &   1st degree connection & All        \\ \hline
-\#Users                    &  17583                       &   95503                 & 113086     \\ \hline
-\#Ratings                  &  567461                      &   13832047            & 14399503  \\ \hline
-\#Public Profiles          &  7816                        &   78723                & 86538     \\ \hline
-\#Private Profiles         &  2564                        &   5314                  &  7878      \\ \hline
-\#Profiles w/o any reviews &  7203                        &   11559                   & 18762      \\ \hline
+\                          &  Goodreads Authors/Users    &   Friends                &   All        \\ \hline
+\#Ratings                  &  567461                     &   13832047               &   14399503  \\ \hline
+\#Users                    &  17583                      &   95503                  &   113086     \\ \hline
+\#Public Profiles          &  7816                       &   78723                  &   86538     \\ \hline
+\#Private Profiles         &  2564                       &   5314                   &   7878      \\ \hline
+\#Profiles w/o any reviews &  7203                       &   11559                  &   18762      \\ \hline
+\#Books rated              &  171653                     &   11559                  &   1714613      \\ \hline
 \end{tabular}
 \end{center}
 \caption{Goodreads Authors/Users Statistics} \label{table:crawl_stat}
 \end{table}
 
-
 % Problem with private profiles. Need data from 100 to 350 for 1st degree connection
 
-
+As we can see, by getting only the first degree connection of 20000 thousand members, we have almost 15 million reviews, 1714613 books and 86000 reviews posters to analyze.
 
 % Books read: 1714613
 
@@ -66,11 +93,11 @@ The users who have not provided any ratings for the books that they have read ar
 
 % column chart 
 % average How many books a user has read - - I want total average
-% distribution - column chart - 8 buckets (0-10, 11-20, 21-30... 80+) -> fix bukcet size depending on the data
+% distribution - column chart - 10 buckets (0-10, 11-20, 21-30... 80+) -> fix bukcet size depending on the data
 
 % column chart 
 % Average rating a user has given - - I want total average
-% distribution of a user -average rating - column chart - 8 buckets (0.1-0.5, 0.6-1... 4.5-5)
+% distribution of a user -average rating - column chart - 10 buckets (0.1-0.5, 0.6-1... 4.5-5)
 
 % Graph:
 % x -> Nb of books read by a user
@@ -95,9 +122,10 @@ The users who have not provided any ratings for the books that they have read ar
 % 1  point = 1 book
 
 
-
-
-
+\section{Description of the model, algorithm, and/or core of project}
+\section{Discussion of key challenges}
+\section{Evaluation of your experiments / results / finding}
+\section{Outline of each team member’s contributions}
 
 
 
@@ -165,20 +193,6 @@ Following is the overview of the proposed analysis:
 \end{itemize}
 \section{Project Progress}
 
-\subsection{Completed Work}
-Table \ref{table:crawl_stat} shows the statistic of the group {\it Goodreads Authors/Users}. As stated earlier, it has been observed that many users have kept their profiles private. The users who have not reviewed a single book are of no use for the analysis. So, filtering these users leaves behind a base user set with size close to 8000.
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{lc}
-\hline
-\#Ratings                  & 567461 \\ \hline
-\#Public Profiles          & 7815   \\ \hline
-\#Private Profiles         & 2564   \\ \hline
-\#Profiles w/o any reviews & 7203   \\ \hline
-\end{tabular}
-\end{center}
-\caption{Goodreads Authors/Users Statistics} \label{table:crawl_stat}
-\end{table}
 To gather a substantial set of users, we collect the friends of the base users. Again, we filter the friends who are already in the group, who have kept their profiles private and the ones who have not reviewed a single book. Following this strategy, we have a consolidated list of 95503 users which will be the user base for out analysis. \\
 The code for scraping is available on \href{https://github.com/acreux/nus-cs5345-project/tree/dev}{Github}. To speed up the scraping process, we have also implemented a multi-threaded version querying APIs in parallel.
 

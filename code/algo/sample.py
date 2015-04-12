@@ -1,49 +1,56 @@
 from random import sample
+import multiprocessing
+from functools import partial
+
+
+def filt(line, sample):
+    u = line.rstrip().split(";")[0]
+    # Keep only reviews from our sample
+    if u in sample:
+        return u
 
 def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
     
     suffix = suffix or str(size)
 
-    with open(reviews) as f:
+    user_filename = sample_users(size, suffix)
+    
+    print "Users saved. Start reviews filtering."
 
-        # Sample users
-        user_set = set(int(line.rstrip().split(";")[0]) for line in f)
-        user_sample = sample(user_set, size)
+    with open(user_filename) as u:
+        user_set = set(line.rstrip() for line in u)
 
-        # Save users
-        with open("user_sample_" + suffix + ".csv", "w") as users_out:
-            users_out.writelines((str(i) + "\n" for i in iter(user_sample)))
+    print len(user_set)
+
+    with open(reviews) as f,\
+         open("user_book_sample_" + suffix + ".csv", "w") as reviews_out:
         
-        # Filter reviews
-        f.seek(0)
-        with open("user_book_sample_" + suffix + ".csv", "w") as reviews_out:
-            for i, line in enumerate(f):
-                if not i%10**6:
-                    print i
-                # Keep only reviews from our sample
-                if int(line.rstrip().split(";")[0]) in user_sample:
-                    reviews_out.write(line)
+        for i, line in enumerate(f):
+            if not i%10**6:
+                print i
+            user_id = line.rstrip().split(";")[0]
+            if user_id in user_set:
+                reviews_out.write(line)
 
-def sample_users(size=10**4, users="users.csv"):
+def sample_users(size=10**4, suffix=None, users="users.csv"):
     """Sample users. 
     Deprecated: Use sample_reviews instead"""
-    with open(users) as f,\
-         open(users.split(".")[0] + "_sample_" + str(size/1000) + ".csv", "w") as out:
+
+    suffix = suffix or str(size)
+    with open(users) as f:
         user_set = set(line.rstrip() for line in f)
         user_sample = sample(user_set, size)
-        f.seek(0)
-        for i, line in enumerate(f):
-            if not i%10**4:
-                print i
-            if line.rstrip() in user_sample:
-                out.write(line)
+
+    out_filename = "user_sample_" + suffix + ".csv"
+    with open("user_sample_" + suffix + ".csv", "w") as out:
+        out.writelines((i + "\n" for i in iter(user_sample)))
+    return out_filename
 
 def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
     """Only keep friends connections from users who are in the reviews"""
     with open(users) as u:
         user_set = set(line.rstrip() for line in u)
 
-    print len(user_set)
     with open(friends) as f,\
          open(users.split(".")[0] + "_friends" + ".csv", "w") as out:
         
@@ -56,5 +63,5 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-    # sample_reviews(1000, "1000")
-    # sample_friends(users="user_sample_1000.csv")
+    sample_reviews(10000, "10000")
+    # sample_friends(users="user_sample_10000.csv")

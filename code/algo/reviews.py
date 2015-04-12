@@ -42,7 +42,7 @@ class Reviews(object):
                 book_to_user[book].add((user, rating))
         return book_to_user
 
-    def user_to_user(self, reviews_filename="user_book_reviews.csv", suffix=None):
+    def user_to_user(self, reviews_filename="user_book_reviews.csv", suffix=None, score="common"):
         """
         1. Get the user_book dict
         2. Create the dict { user_id: set(book_read)}
@@ -60,21 +60,21 @@ class Reviews(object):
         all_combinations = (size_U_T_B * (size_U_T_B-1))/2
         step = all_combinations/20
         print "users_books done"
-        print size_U_T_B
-        print all_combinations
+        print "Users: ", size_U_T_B
+        print "Number of combinations to compute: ", all_combinations
 
         # 3. Generate all possible combinations between users.
         # iterable = ((u, U_T_B_books[u], v, U_T_B_books[v]) for u, v in combinations(U_T_B.keys(), 2))
         def it():
             for i, (u, v) in enumerate(combinations(U_T_B.keys(), 2)):
                 if not i%step:
-                    print i, "/", all_combinations, " - ",  (i*20)/all_combinations, "/", 20, " - "
+                    print str(i).rjust(5), "/", all_combinations, " - ",  (i*20+1)/all_combinations, "/", 20, " - "
                 yield (u, U_T_B[u], U_T_B_books[u], v, U_T_B[v], U_T_B_books[v]) 
         
         # ##################################
         # Chooose your own score function in scores.py
         # ##################################
-        score_func = get_score("common")
+        score_func = get_score(score)
 
         # Multiprocessing
         pool = multiprocessing.Pool(10)
@@ -83,9 +83,15 @@ class Reviews(object):
         a = pool.imap_unordered(score_func, it(), 100)
 
         suffix = suffix or reviews_filename.split(".")[0].split("_")[-1]
-        with open("edges_" + suffix + ".csv", "w") as f:
-            f.writelines(i for i in a if i)
+
+        with open("_".join(["edges", score, suffix]) + ".csv", "w") as f:
+            for ind_line, line in enumerate(a):
+                if ind_line>10**7:
+                    raise Exception("Too many edges.")
+                if line:
+                    f.writelines(line)
+        print ind_line, " edges created"
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_50.csv")
+    r.user_to_user("user_book_sample_1000.csv")

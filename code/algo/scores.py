@@ -3,6 +3,7 @@ from functools import partial
 
 # Create your score function, andd add it in get_score.
 #  Beware, you have to set your own threshold. Do not put a threshold too low.
+
  
 def common_book_score(book_rating_1,  book_rating_2, book_set, threshold=100):
     res = len(book_set)

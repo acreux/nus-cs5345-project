@@ -31,7 +31,7 @@ class Reviews(object):
         with open(filename, "wb") as f:
             pickle.dump(self.user_to_book, f)
 
-    def _generate_user_to_book(self, filename="test1.csv"):
+    def user_to_book(self, filename="user_book_reviews.csv"):
         user_to_book = defaultdict(set)
         with open(filename, "r") as f:
             for line in f:
@@ -39,33 +39,27 @@ class Reviews(object):
                 user_to_book[user].add((book, rating))
         return user_to_book
 
-    @property
-    def user_to_book(self):
-        if not self._user_to_book:
-            self._user_to_book = self._generate_user_to_book()
-        return self._user_to_book
-
     def save_book_to_user(self, filename="book_to_user_pickle"):
         with open(filename, "wb") as f:
             pickle.dump(self.book_to_user, f)
 
-    def clean_reviews(self, filename="reviews.csv"):
-        book_cpt, last_book_id = 0, ""
-        user_cpt, last_user_id = 0, ""
+    # def clean_user_book_reviews(self, filename="reviews.csv", filename_users="users.csv"):
+    #     book_cpt, last_book_id = 0, ""
+    #     user_cpt, last_user_id = 0, ""
 
-        f = fileinput.FileInput(filename, inplace=True)
-        for line in f:
-            new_book_id, new_user_id, rating = line.rstrip().split(";")
-            if new_book_id != last_book_id:
-                book_cpt += 1
-                last_book_id = new_book_id
+    #     f = fileinput.FileInput(filename, inplace=True)
+    #     for line in f:
+    #         new_book_id, new_user_id, rating = line.rstrip().split(";")
+    #         if new_book_id != last_book_id:
+    #             book_cpt += 1
+    #             last_book_id = new_book_id
 
-            if new_user_id != last_user_id:
-                user_cpt += 1
-                last_user_id = new_user_id
+    #         if new_user_id != last_user_id:
+    #             user_cpt += 1
+    #             last_user_id = new_user_id
 
-            print ";".join([str(book_cpt), str(user_cpt), rating])
-        f.close()
+    #         print ";".join([str(book_cpt), str(user_cpt), rating])
+    #     f.close()
     
     @property
     def book_to_user(self):
@@ -73,7 +67,7 @@ class Reviews(object):
             self._book_to_user = self._generate_book_to_user()
         return self._book_to_user
 
-    def _generate_book_to_user(self, filename="test1.csv"):
+    def _generate_book_to_user(self, filename="book_user_reviews.csv"):
 
         book_to_user = defaultdict(set)
         with open(filename, "r") as f:
@@ -82,24 +76,35 @@ class Reviews(object):
                 book_to_user[book].add((user, rating))
         return book_to_user
 
-    def user_to_user(self, reviews_filename="reviews.csv"):
-        threshold = 10
-        def score(l1, l2):
-            a = set(zip(*l1)[0])
-            if len(a) < threshold:
-                return 0
-            return len(a.intersection(zip(*l2)[0]))
+    def user_to_user(self, reviews_filename="user_book_reviews.csv"):
+        # threshold = 3
 
-        U_T_B = self.user_to_book
+        def score(book_set_1, book_set_2):
+            return len(book_set_1.intersection(book_set_2))
+
+        U_T_B = self.user_to_book(reviews_filename)
+
+        # Get the books only
+        U_T_B_books = {k: set(zip(*v)[0]) for k, v in U_T_B.iteritems()}
+        
+        size_U_T_B = len(U_T_B)
+        all_combinations = (size_U_T_B * (size_U_T_B-1))/2
 
         print "users_books done"
-        i = 0
-        for u, v in combinations(U_T_B.keys(), 2):
-            i += 1
-            if not i % 10000000:
-                print i
-            if score(U_T_B[u], U_T_B[v]) >= threshold:
-                yield (u, v) 
+
+        def score_gen():
+            i = 0
+            for u, v in combinations(U_T_B.keys(), 2):
+                i += 1
+                if not i % 10**7:
+                    print i/10**7, "/",  all_combinations/10**7
+                yield u, v, score(U_T_B_books[u], U_T_B_books[v])
+    
+        def out():
+            return heapq.nlargest(10**6, score_gen(), key=itemgetter(2))
+
+        with open("test", "w") as f:
+            f.writelines((";".join([str(i) for i in scores]) + "\n" for scores in out()))
 
     def user_to_user_too_long(self, reviews_filename="reviews.csv"):
 
@@ -140,9 +145,4 @@ class Reviews(object):
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user()
-
-    i = 0
-    for _ in r.user_to_user():
-        if not i %  10**3:
-            print i
+    r.user_to_user("user_book_sample_50.csv")

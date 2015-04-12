@@ -2,9 +2,11 @@ from random import sample
 
 def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
     
-    suffix = suffix or str(size/100)
+    suffix = suffix or str(size)
+
     with open(reviews) as f:
 
+        # Sample users
         user_set = set(int(line.rstrip().split(";")[0]) for line in f)
         user_sample = sample(user_set, size)
 
@@ -12,6 +14,7 @@ def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
         with open("user_sample_" + suffix + ".csv", "w") as users_out:
             users_out.writelines((str(i) + "\n" for i in iter(user_sample)))
         
+        # Filter reviews
         f.seek(0)
         with open("user_book_sample_" + suffix + ".csv", "w") as reviews_out:
             for i, line in enumerate(f):
@@ -54,4 +57,4 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 if __name__ == "__main__":
     # sample_reviews(1000, "1000")
-    sample_friends(users="user_sample_1000.csv")
+    # sample_friends(users="user_sample_1000.csv")

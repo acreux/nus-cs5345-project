@@ -53,6 +53,5 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-    # sample_reviews(50, "50")
-    # sample_users(1000)
-    sample_friends(users="user_sample_50.csv")
+    # sample_reviews(1000, "1000")
+    sample_friends(users="user_sample_1000.csv")

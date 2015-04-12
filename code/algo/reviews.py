@@ -1,11 +1,23 @@
 from collections import defaultdict
 import cPickle as pickle
 import fileinput
-from itertools import combinations
+from itertools import combinations, izip_longest
 import heapq
 from operator import itemgetter
+import multiprocessing
 
+from multip import Multiprocessing
 
+def score(book_set_1, book_set_2, threshold=3):
+    res = len(book_set_1.intersection(book_set_2))
+    return res if res>threshold else None
+        
+
+def score_multi(edge):
+    u, u_books, v, v_books = edge
+    l = score(u_books, v_books)
+    if l:
+        return ";".join([str(i) for i in [u, v, l]])+"\n"
 
 class Reviews(object):
     """Class handling reviews"""
@@ -35,7 +47,7 @@ class Reviews(object):
         user_to_book = defaultdict(set)
         with open(filename, "r") as f:
             for line in f:
-                book, user, rating = line.rstrip().split(";")
+                user, book, rating = line.rstrip().split(";")
                 user_to_book[user].add((book, rating))
         return user_to_book
 
@@ -77,10 +89,6 @@ class Reviews(object):
         return book_to_user
 
     def user_to_user(self, reviews_filename="user_book_reviews.csv"):
-        # threshold = 3
-
-        def score(book_set_1, book_set_2):
-            return len(book_set_1.intersection(book_set_2))
 
         U_T_B = self.user_to_book(reviews_filename)
 
@@ -91,21 +99,42 @@ class Reviews(object):
         all_combinations = (size_U_T_B * (size_U_T_B-1))/2
 
         print "users_books done"
+        print size_U_T_B
+        print all_combinations
 
-        def score_gen():
-            i = 0
-            for u, v in combinations(U_T_B.keys(), 2):
-                i += 1
-                if not i % 10**7:
-                    print i/10**7, "/",  all_combinations/10**7
-                yield u, v, score(U_T_B_books[u], U_T_B_books[v])
-    
-        def out():
-            # Retrieve the 1000000 edges with the highest score
-            return heapq.nlargest(10**6, score_gen(), key=itemgetter(2))
 
-        with open("test", "w") as f:
-            f.writelines((";".join([str(i) for i in scores]) + "\n" for scores in out()))
+        # def score_gen():
+        #     i = 0
+        #     for u, v in combinations(U_T_B.keys(), 2):
+        #         i += 1
+        #         if not i % 10**7:
+        #             print i/10**7, "/",  all_combinations/10**7
+        #         yield u, v, score(U_T_B_books[u], U_T_B_books[v])
+
+
+            # return list(lines_gen())
+            # with open(file_out, "w") as f:
+            #     f.writelines(lines_gen())
+        
+        # iterable = ((u, U_T_B_books[u], v, U_T_B_books[v]) for u, v in combinations(U_T_B.keys(), 2))
+        def it():
+            for i, (u, v) in enumerate(combinations(U_T_B.keys(), 2)):
+                if not i%10000:
+                    print i
+                yield (u, U_T_B_books[u], v, U_T_B_books[v]) 
+
+        # Multiprocessing
+        pool = multiprocessing.Pool(10)
+        a = pool.imap_unordered(score_multi, it(), 100)
+
+        # print len(work_multi.do(i foriterables, 10**4)))
+
+        # def out():
+        #     # Retrieve the 1000000 edges with the highest score
+        #     return heapq.nlargest(10**6, score_gen(), key=itemgetter(2))
+
+        with open("edges_" + reviews_filename.split(".")[0].split("_")[-1] + ".csv", "w") as f:
+            f.writelines(i for i in a if i)
 
     def user_to_user_too_long(self, reviews_filename="reviews.csv"):
         """deprecated"""
@@ -147,4 +176,4 @@ class Reviews(object):
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_50.csv")
+    r.user_to_user("user_book_sample_1000.csv")

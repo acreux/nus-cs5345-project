@@ -101,12 +101,14 @@ class Reviews(object):
                 yield u, v, score(U_T_B_books[u], U_T_B_books[v])
     
         def out():
+            # Retrieve the 1000000 edges with the highest score
             return heapq.nlargest(10**6, score_gen(), key=itemgetter(2))
 
         with open("test", "w") as f:
             f.writelines((";".join([str(i) for i in scores]) + "\n" for scores in out()))
 
     def user_to_user_too_long(self, reviews_filename="reviews.csv"):
+        """deprecated"""
 
         def basic_score(rating1, rating2):
             """Score between two users. Only based on the ratings"""

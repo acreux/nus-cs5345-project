@@ -17,6 +17,7 @@ def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
             for i, line in enumerate(f):
                 if not i%10**6:
                     print i
+                # Keep only reviews from our sample
                 if int(line.rstrip().split(";")[0]) in user_sample:
                     reviews_out.write(line)
 

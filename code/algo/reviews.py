@@ -117,5 +117,3 @@ class Reviews(object):
                     for edge in mix(book_bucket): yield edge
 
         return heapq.nlargest(10, score_gen(), key=itemgetter(4))
-
-

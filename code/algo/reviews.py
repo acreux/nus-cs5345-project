@@ -58,7 +58,7 @@ class Reviews(object):
         
         size_U_T_B = len(U_T_B)
         all_combinations = (size_U_T_B * (size_U_T_B-1))/2
-
+        step = all_combinations/20
         print "users_books done"
         print size_U_T_B
         print all_combinations
@@ -67,8 +67,8 @@ class Reviews(object):
         # iterable = ((u, U_T_B_books[u], v, U_T_B_books[v]) for u, v in combinations(U_T_B.keys(), 2))
         def it():
             for i, (u, v) in enumerate(combinations(U_T_B.keys(), 2)):
-                if not i%10**6:
-                    print i
+                if not i%step:
+                    print i, "/", all_combinations, " - ",  (i*20)/all_combinations, "/", 20, " - "
                 yield (u, U_T_B[u], U_T_B_books[u], v, U_T_B[v], U_T_B_books[v]) 
         
         # ##################################

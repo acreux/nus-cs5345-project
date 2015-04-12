@@ -1,6 +1,5 @@
 import multiprocessing
-from tor import Tor
-from scrape import Scrape, UserScrape
+# from scrape import Scrape, UserScrape
 
 
 class Multiprocessing(object):
@@ -9,10 +8,12 @@ class Multiprocessing(object):
         self.pool = multiprocessing.Pool()
         self.func = func
 
-    def do(self, iterable):
-        self.results = self.pool.map(self.func, iterable)
+    def do(self, iterable, chunksize=1):
+        # self.results = self.pool.map(self.func, iterable, chunksize)
+        self.results = self.pool.imap_unordered(self.func, iterable, chunksize)
         self.pool.close()
         self.pool.join()
+        return self.results
 
 
 def scrape(scrape_params):
@@ -74,11 +75,11 @@ if __name__ == "__main__":
         # max_page = min_page + page_bacdtch*(max_iter+1)-1
 
 
-    # for i in range(700, 960, 50):
-    #     iterable = range(i, i+49)
-    #     a = Multiprocessing(scrape_files)
-    #     a.do(iterable)
-    # scrape_files(955)
+    for i in range(700, 960, 50):
+        iterable = range(i, i+49)
+        a = Multiprocessing(scrape_files)
+        a.do(iterable)
+    scrape_files(955)
 
     # scrape({"group_id":group_id,
     #         "min_page":min_page + 50+1,

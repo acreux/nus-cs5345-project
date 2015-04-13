@@ -9,7 +9,7 @@ def filt(line, sample):
     if u in sample:
         return u
 
-def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
+def sample_reviews(size=10**4, suffix=None, reviews="user_book_reviews.csv"):
     """Sample reviews"""
     
     suffix = suffix or str(size)

@@ -112,4 +112,4 @@ class Reviews(object):
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_5000.csv", score="common", threshold=5, chunksize=100, process=1)
+    r.user_to_user("user_book_sample_5000.csv", score="rating", threshold=0.7, chunksize=5000, process=4)

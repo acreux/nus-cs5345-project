@@ -57,6 +57,7 @@ class Reviews(object):
 
         # Get the books only
         U_T_B_books = {k: set(zip(*v)[0]) for k, v in U_T_B.iteritems()}
+        U_T_B_book_ratings = {k: {book: rating for book, rating in v} for k, v in U_T_B.iteritems()}
         
         size_U_T_B = len(U_T_B)
         all_combinations = (size_U_T_B * (size_U_T_B-1))/2
@@ -73,7 +74,7 @@ class Reviews(object):
                 # logging
                 if not i%step:
                     print str(i).rjust(5), "/", all_combinations, " - ",  (i*step_size+1)/all_combinations, "/", step_size, " - "
-                yield u, U_T_B[u], U_T_B_books[u], v, U_T_B[v], U_T_B_books[v]
+                yield u, U_T_B_book_ratings[u], U_T_B_books[u], v, U_T_B_book_ratings[v], U_T_B_books[v]
         
         # ##################################
         # Chooose your own score function in scores.py
@@ -112,4 +113,4 @@ class Reviews(object):
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_5000.csv", score="common", threshold=5, chunksize=100, process=1)
+    r.user_to_user("user_book_sample_50.csv", score="common", threshold=5, chunksize=50000, process=10)

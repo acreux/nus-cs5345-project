@@ -103,8 +103,8 @@ class UserGraph(Graph):
 
 
 if __name__ == "__main__":
-    g = UserGraph("edges_common_1000.csv")
+    g = UserGraph("edges_common_5000.csv")
     summary(g)
 
     print sum([len(v) for v in g.friends.itervalues()])
-    # print g.partition
+    print g.partition

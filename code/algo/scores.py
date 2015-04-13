@@ -8,6 +8,8 @@ from functools import partial
 def common_book_score(book_rating_1,  book_rating_2, book_set, threshold=100):
     """book_rating_1 = book to """
     res = len(book_set)
+    print type(book_rating_1)
+    print type(book_rating_2)
     return res if res>threshold else None
         
 def trivial_score(book_rating_1,  book_rating_2, book_set, threshold=1000):

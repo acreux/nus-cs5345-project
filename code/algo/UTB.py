@@ -33,26 +33,19 @@ def score(u, v):
 		return None
 		
 def user_book_index(fname):
-	temp = defaultdict(list)
+	v = defaultdict(set)
 	with open(fname, "r") as f:
-		i = 0
-		for line in f:
+		for i, line in enumerate(f):
 			u, b, r = line.strip().split(';')
-			temp[u].append((b, r))
+			v[u].add((b, r))
 			if i % 1000000 == 0:
 				print i
-			i += 1
 			
-	U_T_B = dict((k, v) for k, v in temp.iteritems() if len(v) >= user_significance)
-	del temp
-	return U_T_B
+	return dict((k, v) for k, v in U_T_B.iteritems() if len(v) >= user_significance)
 
 def user_user_edges(U_T_B):
-	e = [ score(u, v) for u, v in it.combinations(U_T_B.keys(), 2) ]
-	edges = []
-	for i in e:
-		if i: edges.append(i)
-	del e
+	edges_gen = (score(u, v) for u, v in it.combinations(U_T_B.keys(), 2))
+	edges = [e for e in edges_gen if e]
 	pickle.dump(edges, open("users_%d.pkl" % len(U_T_B), "wb"))
 	return edges
 

@@ -21,7 +21,6 @@ class Friendship(object):
         self.user_index = {e:i for i, e in enumerate(list(self.user_set))}
 
     def _generate_friends(self, f):
-
         self.friends = defaultdict(set)
         f.seek(0)
         for line in f:

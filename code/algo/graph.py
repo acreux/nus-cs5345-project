@@ -31,7 +31,8 @@ class GoodreadsGraph(nx.Graph):
         self.users_matrix_name = self.datafile + "_user_csr"
         self.users_graph_name = self.datafile + "_user_graph"
 
-    def _loadFromRaw(self, datafile):
+            
+    def _load_raw_(self, datafile):
         with open(datafile, "r") as f:
             # Add edges
             self.add_weighted_edges_from(((("u"+line.split(";")[0]),
@@ -66,6 +67,7 @@ class GoodreadsGraph(nx.Graph):
         """Load a graph picke file"""
         with open(filename, "rb") as f:
             return pickle.load(f)
+
 
     # @property
     # def projected_users(self):

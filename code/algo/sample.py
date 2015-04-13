@@ -47,7 +47,8 @@ def sample_users(size=10**4, suffix=None, users="users.csv"):
     return out_filename
 
 def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
-    """Only keep friends connections from users who are in the reviews"""
+    """Only keep friends connections from users who are in the reviews.
+    Deprecated, do not use it."""
     with open(users) as u:
         user_set = set(line.rstrip() for line in u)
 

@@ -4,10 +4,15 @@ import sys
 
 def read_graph(fname):
 	g = nx.Graph()
-	with open(fname, "r") as f:
-		edges = map(lambda x: (x[0], x[1], {"weight":float(x[2])}), (line.strip().split(',') for line in f))
-	g.add_edges_from(edges)
 
+	# Get the edges
+	def edges_gen():
+		with open(fname, "r") as f:
+			for line in f:
+				user_id, book_id, weight = line.strip().split(';') 
+				yield user_id, book_id, {"weight":float(weight[2])}
+	
+	g.add_edges_from(edges_gen())
 	return g
 
 if __name__ == "__main__":

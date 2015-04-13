@@ -1,0 +1,102 @@
+# import igraph
+from collections import defaultdict
+from igraph import Graph, summary
+import louvain
+
+
+# class FriendsGraph(Graph):
+
+#     def __init__(self, edges_filename):
+
+
+#     def load_edges(self, filename, index):
+#     friends = defaultdict(set)
+#     with open(fname, "r") as f:
+#         for line in f:
+#             u, v = line.strip().split(';')
+#             friends[int(u)].add(int(v))
+#             friends[int(v)].add(int(u))
+#     return friends
+
+class UserGraph(Graph):
+
+    def __init__(self, edges_filename):
+        edges_gen = self._load_edges(edges_filename)
+        Graph.__init__(self, list(edges_gen))
+        self._friends = None
+        self._partition = None
+        # self.add_edges(edges_gen)
+
+    def _load_edges(self, filename):
+        """Nodes index is created during the csv loading"""
+        self.user_index = {}
+
+        def edges_gen():
+            user_cpt = 0
+
+            with open(filename, "r") as f:
+                for line in f:
+                    u, v, score = line.rstrip().split(";")
+                    u_index = self.user_index.setdefault(u, user_cpt)
+                    if u_index == user_cpt:
+                        user_cpt +=1
+                    v_index = self.user_index.setdefault(v, user_cpt)
+                    if v_index == user_cpt:
+                        user_cpt +=1
+                    # yield u_index, v_index, float(score)
+                    yield u_index, v_index
+        return edges_gen()
+
+    def _generate_partition(self):
+        return louvain.find_partition(self, method="Modularity")
+
+    @property
+    def friends(self):
+        if not self._friends:
+            self._friends = self._generate_friends_index()
+        return self._friends
+
+    @property
+    def partition(self):
+        if not self._partition:
+            self._partition = self._generate_partition()
+        return self._partition
+
+    def _generate_friends_index(self, friends_filename="friends.csv"):
+        """Retrieve friends using the index created"""
+        friends_index = defaultdict(set)
+        users = set(self.user_index.keys())
+        with open(friends_filename) as f:
+            for i, line in enumerate(f):
+                if not i%10**6:
+                    print i
+                u1, u2 = line.rstrip().split(";")
+                if (u1 in users) and (u2 in users):
+                    friends_index[self.user_index[u1]].add(self.user_index[u2])
+        return friends_index
+
+    def homophily(self):
+        """
+        Homophily:
+        How many friends are in the book community?
+        # This calculates homophily for largest community"""
+        h = 0
+        for member in self.partition[0]:
+
+            num = len(self.friends[member].intersection(self.partition[0]))
+            den = len([ i for i in friends[member] if i in index ])
+            if den == 0:
+                if num != 0:
+                    raise Exception("Error: Not Possible")
+            else:
+                h += 1. * num / den
+            
+        return 1. * h / len(self.partition[0])
+
+
+if __name__ == "__main__":
+    g = UserGraph("edges_common_1000.csv")
+    summary(g)
+
+    print g.friends
+    print g.partition

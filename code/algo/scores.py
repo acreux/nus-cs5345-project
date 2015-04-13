@@ -13,11 +13,11 @@ def trivial_score(book_rating_1,  book_rating_2, book_set, threshold=1000):
     res = sum(book_rating_1[k]+book_rating_2[k] for k in book_set)
     return res if res>threshold else None
         
-def get_score(score_func):
+def get_score(score_func, threshold):
     if score_func == "trivial":
-        return partial(score_multi, score_func=trivial_score)
+        return partial(score_multi, score_func=partial(trivial_score, threshold=threshold))
     elif score_func == "common":
-        return partial(score_multi, score_func=common_book_score)
+        return partial(score_multi, score_func=partial(common_book_score, threshold=threshold))
 
 def score_multi(edge, score_func=common_book_score):
     u, u_book_rating, u_books, v, v_book_rating, v_books = edge

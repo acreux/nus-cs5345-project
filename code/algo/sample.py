@@ -10,6 +10,7 @@ def filt(line, sample):
         return u
 
 def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
+    """Sample reviews"""
     
     suffix = suffix or str(size)
 
@@ -64,5 +65,10 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-    sample_reviews(10000, "10000")
+    # create user_sample_10000.csv
+    # create user_book_sample_10000.csv
+    sample_reviews(5000, "5000")
+
+
+    
     # sample_friends(users="user_sample_10000.csv")

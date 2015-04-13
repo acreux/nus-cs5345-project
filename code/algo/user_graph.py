@@ -23,6 +23,8 @@ class UserGraph(Graph):
     def __init__(self, edges_filename):
         edges_gen = self._load_edges(edges_filename)
         Graph.__init__(self, list(edges_gen))
+
+
         self._friends = None
         self._partition = None
         # self.add_edges(edges_gen)
@@ -32,12 +34,17 @@ class UserGraph(Graph):
         self.user_index = {}
 
         def edges_gen():
+            """Igraph requires to add integers (1..n).
+            Create the user id on the fly, as we send the edges"""
             user_cpt = 0
 
             with open(filename, "r") as f:
                 for line in f:
                     u, v, score = line.rstrip().split(";")
+                    # If u already in self.user_index, return the value
+                    # If not, create it.
                     u_index = self.user_index.setdefault(u, user_cpt)
+                    # new u_index, we update the user counter
                     if u_index == user_cpt:
                         user_cpt +=1
                     v_index = self.user_index.setdefault(v, user_cpt)
@@ -73,6 +80,7 @@ class UserGraph(Graph):
                 u1, u2 = line.rstrip().split(";")
                 if (u1 in users) and (u2 in users):
                     friends_index[self.user_index[u1]].add(self.user_index[u2])
+                    friends_index[self.user_index[u2]].add(self.user_index[u1])
         return friends_index
 
     def homophily(self):
@@ -98,5 +106,5 @@ if __name__ == "__main__":
     g = UserGraph("edges_common_1000.csv")
     summary(g)
 
-    print g.friends
-    print g.partition
+    print sum([len(v) for v in g.friends.itervalues()])
+    # print g.partition

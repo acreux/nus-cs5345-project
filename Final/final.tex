@@ -36,7 +36,6 @@ Our project aims  to detect and study goodreads communities based on the book ra
 The users who have not provided any ratings for the books that they have read are considered as invalid users and we have eliminated them from our data set. This is because just having read the book does not indicate that the user has liked the book. We also need the rating he has given to the book to know whether he/she likes(high rating) or dislikes (low rating) the book he has read.\\\\
 
 
-
 \section{Related work}
 
 \section{Description of data collection and pre-processing}
@@ -51,14 +50,13 @@ Indeed, Goodreads hosts various reading groups catered to various genres and rea
 % It is divided by genres, and includes folders for writing resources, book websites, videos/trailers, and blogs. \\
 
 This is why the members of this group serve as a base user set.
-Then, we just need to retrieve all the ratings writtent by this user set.
-To collect more users, and thus create a substantial dataset, we study the the {\it 1-neighbourhood} of this set of users, \emph{i.e.} their friends.\\
-At the end, we have scraped more than 80000 members including more than 1.5 million reviews.
+To collect more users, and thus create a substantial dataset, we study the {\it 1-neighbourhood} of this set of users, i.e.\ their friends.\\
+At the end, we have scraped the ratings of more than 80000 members including more than 1.5 million reviews.
 
 \subsection{Statistics}
 
 An overview of the goodreads data we have scraped is vital as it helps us understand and grasp insight of the data we are munging.
-As it is explained in section~\ref{sec:data_acquisition}, we has extracted our data in two steps:
+As it is explained in section~\ref{sec:data_acquisition}, we have extracted our data in two steps:
 \begin{itemize}
 \item Members of the Goodreads Authors/Users
 \item Friends of the Goodreads Authors/Users members
@@ -123,14 +121,41 @@ As we can see, by getting only the first degree connection of 20000 thousand mem
 
 
 \section{Description of the model, algorithm, and/or core of project}
+
+
 \section{Discussion of key challenges}
+
+Many challenges arose during this project, and we needed to fix each bottleneck simultaneously.
+
+\subsection{Data processing}
+
+During data scraping, we needed to request many times the Goodreads APIs.
+We had decided to retrieve the users of a reading group, get all the reviews from each user and retrieve all friends for each user.
+Each information retrieval is one request sent to Goodread APIs.
+By storing almost $90000$ users, we made more than 1 million requests. Using multiprocessing, we speed up this part but make data storage more complicated and difficult to read.
+
+\subsection{Matrix projection}
+
+With $90000$ users, $1.7$ million books and $14$ million reviews, we need to project this bipartite graph to a user-user graph.
+
+The user-book matrix, named $R$, of shape $90000 \times 1700000$, is very sparse as its density is around 0.001. But the projection matrix was too dense, as two users who have read the same book might be related in the reader graph.
+The projection user-graph is computed as: $U~=~R \dot R^T$.
+We tried computing $U$ using \emph{sparse} matrices within the well-known library \emph{Scipy}\cite{scipy}, but we hit a memory overflow on a 64GB machine.
+Besides, a $90000 \times 90000$ matrix of short integers requires $32$GB and thus does not fit in a laptop memory.
+
+So we chose two ways to deal with it:
+\begin{itemize}
+\item Using a sample of users. We can deal with 10000 users and keep meaningful insights of our analysis.
+\item Filter the edges created. If two users have read 1000 books each, and they only have rated one book in common, we do not need to create an edge between those both users. Computing a too dense user graph is time-wasting and does not give relevant information.
+\end{itemize}
+
+\subsection{Projection}
+
+Using a matrix projection is a very basic way of interpreting relation between two users. To give a meaningful weight between, we compute each edges between two users by hand. So, if we want to build a graph with $n$ users, we should compute $\frac{n * (n-1)}{2}$ edges. 
+For 10000 users, we have to compute 50 million edges. Multiprocessing helps us reduce this time by a factor of 10.
+
 \section{Evaluation of your experiments / results / finding}
 \section{Outline of each team member’s contributions}
-
-
-
-
-
 
 
 
@@ -215,5 +240,5 @@ We are assuming that the data we get from scraping is unbiased. That is, we assu
 % \end{itemize}
 
 \bibliographystyle{abbrv}
-\bibliography{ref}
+\bibliography{final_ref}
 \end{document}

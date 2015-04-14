@@ -6,17 +6,20 @@ from functools import partial
 
  
 def common_book_score(book_rating_1,  book_rating_2, book_set, threshold=100):
-    """book_rating_1 = book to """
+    """How many books heave they in common?"""
+    # book_rating_1 = dict with book to rating
     res = len(book_set)
     return res if res>threshold else None
 
 
 def trivial_score(book_rating_1,  book_rating_2, book_set, threshold=1000):
+    """Sum of ratings of both users on common books"""
     res = sum(book_rating_1[k]+book_rating_2[k] for k in book_set)
     return res if res>threshold else None
 
 
 def rating_agreement(book_rating_1,  book_rating_2, book_set, threshold=0.7):
+    """What is the fraction of books they have rated almost the same?"""
     # for book in book_set:
     #     print book_rating_1[book]
     if book_set:

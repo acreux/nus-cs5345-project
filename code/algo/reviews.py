@@ -57,7 +57,7 @@ class Reviews(object):
 
         # Get the books only
         U_T_B_books = {k: set(zip(*v)[0]) for k, v in U_T_B.iteritems()}
-        U_T_B_book_ratings = {k: {book: rating for book, rating in v} for k, v in U_T_B.iteritems()}
+        U_T_B_book_ratings = {k: {book: int(rating) for book, rating in v} for k, v in U_T_B.iteritems()}
         
         size_U_T_B = len(U_T_B)
         all_combinations = (size_U_T_B * (size_U_T_B-1))/2
@@ -113,4 +113,4 @@ class Reviews(object):
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_50.csv", score="common", threshold=5, chunksize=50000, process=10)
+    r.user_to_user("user_book_sample_50.csv", score="same_rating_2", threshold=0, chunksize=50000, process=10)

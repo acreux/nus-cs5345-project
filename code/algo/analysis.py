@@ -10,13 +10,13 @@ if __name__ == "__main__":
 #     same_rating_2
 
     
-    # sample_filename = sample_reviews(2000, "2000_1")
+    sample_filename = sample_reviews(2500, "2500_1")
 
-    # r = Reviews(sample_filename)
+    r = Reviews(sample_filename)
 
-    # reviews_filenames1 = r.user_to_user(score="trivial", threshold=0, chunksize=50000, process=10)
-    # reviews_filenames2 = r.user_to_user(score="same_rating_2", threshold=0, chunksize=50000, process=10)
-    # reviews_filenames3 = r.user_to_user(score="common", threshold=0, chunksize=50000, process=10)
+    reviews_filenames1 = r.user_to_user(score="trivial", threshold=0, chunksize=50000, process=10)
+    reviews_filenames2 = r.user_to_user(score="same_rating_2", threshold=0, chunksize=50000, process=10)
+    reviews_filenames3 = r.user_to_user(score="common", threshold=0, chunksize=50000, process=10)
 
     g = UserGraph(reviews_filenames1)
     g.write_results()

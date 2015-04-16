@@ -52,6 +52,8 @@ class Reviews(object):
         4. Define a score functions outside the class.
         5. Iterate over all combinations and write the result in an output
         """
+        edges_suffix = suffix or reviews_filename.split(".")[0].split("_")[-1]
+        edges_filename = "_".join(["edges", score.replace("_", "-"), edges_suffix]) + ".csv"
 
         U_T_B = self.user_to_book(reviews_filename)
 
@@ -91,8 +93,7 @@ class Reviews(object):
             n0 = time.time()
             time_cpt = 0
 
-            edges_suffix = suffix or reviews_filename.split(".")[0].split("_")[-1]
-            with open("_".join(["edges", score, edges_suffix]) + ".csv", "w") as f:
+            with open(edges_filename, "w") as f:
                 ind_line = 0
                 for ind_line, line in enumerate(edges_gen):
                     if ind_line>10**7:
@@ -110,7 +111,8 @@ class Reviews(object):
                 print ind_line, " edges created"
 
         save_edges(edges_created_gen)
+        return edges_filename
 
 if __name__ == "__main__":
     r = Reviews()
-    r.user_to_user("user_book_sample_50.csv", score="same_rating_2", threshold=0, chunksize=50000, process=10)
+    r.user_to_user("user_book_sample_5000.csv", score="same_rating_2", threshold=0, chunksize=50000, process=10)

@@ -17,7 +17,8 @@ from scores import get_score
 class Reviews(object):
     """Class handling reviews"""
 
-    def __init__(self):
+    def __init__(self, reviews_filename="user_book_reviews.csv"):
+        self.reviews_filename = reviews_filename
         self._book_to_user = None
         self._user_to_book = None
         
@@ -44,7 +45,7 @@ class Reviews(object):
                 book_to_user[book].add((user, rating))
         return book_to_user
 
-    def user_to_user(self, reviews_filename="user_book_reviews.csv", suffix=None, score="common", threshold=100, chunksize=50000, process=10):
+    def user_to_user(self, suffix=None, score="common", threshold=100, chunksize=50000, process=10):
         """
         1. Get the user_book dict
         2. Create the dict { user_id: set(book_read)}
@@ -52,10 +53,10 @@ class Reviews(object):
         4. Define a score functions outside the class.
         5. Iterate over all combinations and write the result in an output
         """
-        edges_suffix = suffix or reviews_filename.split(".")[0].split("_")[-1]
+        edges_suffix = suffix or self.reviews_filename.split(".")[0].split("_")[-1]
         edges_filename = "_".join(["edges", score.replace("_", "-"), edges_suffix]) + ".csv"
 
-        U_T_B = self.user_to_book(reviews_filename)
+        U_T_B = self.user_to_book(self.reviews_filename)
 
         # Get the books only
         U_T_B_books = {k: set(zip(*v)[0]) for k, v in U_T_B.iteritems()}
@@ -114,5 +115,6 @@ class Reviews(object):
         return edges_filename
 
 if __name__ == "__main__":
-    r = Reviews()
-    r.user_to_user("user_book_sample_5000.csv", score="same_rating_2", threshold=0, chunksize=50000, process=10)
+    r = Reviews("user_book_sample_1000.csv")
+    r.user_to_user(score="same_rating_2", threshold=0, chunksize=50000, process=10)
+    r.user_to_user(score="same_rating_2", threshold=0, chunksize=50000, process=10)

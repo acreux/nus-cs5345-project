@@ -3,13 +3,7 @@ import multiprocessing
 from functools import partial
 
 
-def filt(line, sample):
-    u = line.rstrip().split(";")[0]
-    # Keep only reviews from our sample
-    if u in sample:
-        return u
-
-def sample_reviews(size=10**4, suffix=None, reviews="user_book_reviews.csv"):
+def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
     """Sample reviews"""
     
     suffix = suffix or str(size)
@@ -23,8 +17,9 @@ def sample_reviews(size=10**4, suffix=None, reviews="user_book_reviews.csv"):
 
     print len(user_set)
 
+    output_filename = "user_book_sample_" + suffix + ".csv"
     with open(reviews) as f,\
-         open("user_book_sample_" + suffix + ".csv", "w") as reviews_out:
+         open(output_filename, "w") as reviews_out:
         
         for i, line in enumerate(f):
             if not i%10**6:
@@ -32,6 +27,7 @@ def sample_reviews(size=10**4, suffix=None, reviews="user_book_reviews.csv"):
             user_id = line.rstrip().split(";")[0]
             if user_id in user_set:
                 reviews_out.write(line)
+    return output_filename
 
 def sample_users(size=10**4, suffix=None, users="users.csv"):
     """Sample users. 
@@ -65,10 +61,5 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-    # create user_sample_10000.csv
-    # create user_book_sample_10000.csv
-    sample_reviews(5000, "5000")
 
-
-    
-    # sample_friends(users="user_sample_10000.csv")
+    sample_reviews(users="user_sample_10000.csv")

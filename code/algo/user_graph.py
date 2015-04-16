@@ -69,7 +69,18 @@ class UserGraph(Graph):
 
     @property
     def friends_size(self):
-        return sum(len(i) for i in self.friends.values())
+        """How many friends relationships?"""
+        return sum(len(i) for i in self.friends.values())/2
+
+    @property
+    def friends_alone(self):
+        """How many readers are alone?"""
+        return sum(1 for v in self.friends.values() if len(v)==0)
+
+    @property
+    def friends_median(self):
+        """How many readers are alone?"""
+        return np.median([len(i) for i in self.friends.values()])
 
     @property
     def partitions(self):
@@ -107,7 +118,9 @@ class UserGraph(Graph):
                    "score": self.score_f,
                    "size_user": str(len(self.vs)),
                    "size_edges": str(len(self.es)),
-                   "size_friends": str(self.friends_size)}
+                   "size_friends": str(self.friends_size),
+                   "friends_median": str(self.friends_median),
+                   "friends_alone": str(self.friends_alone)}
 
         for algo in  ["louvain", "igraph-multilevel", "igraph-label-propag"]:
             new_dict = dict(results)
@@ -124,17 +137,16 @@ class UserGraph(Graph):
 
     def write_results(self):
         output_filename = "results.csv"
-        fieldnames = ["sample_id", "score", "size_user","size_edges", "size_friends", "detection_algo", "detection_algo_time",
+        fieldnames = ["sample_id", "score", "size_user","size_edges", "size_friends", "friends_alone", "friends_median", "detection_algo", "detection_algo_time",
                       "global_homophily", "clusters_size", "clusters_homophily", "clusters_modularity"]
 
         rows_gen = self.results_gen()
-        with io.open(output_filename, "wb") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";")
-            writer.writeheader()
+        with io.open(output_filename, "ab") as f:
+            w = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";")
+            # w.writeheader()
             for r in rows_gen:
-                writer.writerow(r)
+                w.writerow(r)
 
-    
 
 class Partition(igraph.clustering.VertexClustering):
 
@@ -176,19 +188,4 @@ class Partition(igraph.clustering.VertexClustering):
 if __name__ == "__main__":
     g = UserGraph("edges_common_50.csv")
     g.write_results()
-    # print summary(g)
-    # print g.homophily
-    # g = UserGraph("random_edges_rating_5000_0_7.csv")
-    # print summary(g)
 
-    # print sum([len(v) for v in g.friends.itervalues()])
-    # p = g.partition
-    # print p.summary()
-    
-    # glob_hom = 0
-    # for i in range(len(p)):
-    #     hom, length =  g.homophily(i)
-    #     glob_hom += hom
-    #     print hom, length
-    # print "global homophily: " + str(float(glob_hom)/len(p))
-    

@@ -24,7 +24,6 @@ class UserGraph(Graph):
         edges_gen = self._load_edges(edges_filename)
         Graph.__init__(self, list(edges_gen))
 
-
         self._friends = None
         self._partition = None
         # self.add_edges(edges_gen)

@@ -128,10 +128,10 @@ class UserGraph(Graph):
             new_dict.update({
                 "detection_algo": algo,
                 "detection_algo_time": self.partitions_timer[algo],
-                "global_homophily": self.homophily[algo],
+                "global_homophily": "{:.3f}".format(self.homophily[algo]),
                 "clusters_size": ",".join([str(self.partitions[algo].clusters_size[k]) for k in clusters_keys]),
-                "clusters_homophily": ",".join(["{:.1f}".format(self.partitions[algo].homophily_dict[k]) for k in clusters_keys]),
-                "clusters_modularity": ",".join([str(self.partitions[algo].modularity) for k in clusters_keys])})
+                "clusters_homophily": ",".join(["{:.3f}".format(self.partitions[algo].homophily_dict[k]) for k in clusters_keys]),
+                "clusters_modularity": ",".join(["{:.3f}".format(self.partitions[algo].modularity) for k in clusters_keys])})
             yield new_dict
 
 

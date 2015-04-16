@@ -53,7 +53,7 @@ class Reviews(object):
         4. Define a score functions outside the class.
         5. Iterate over all combinations and write the result in an output
         """
-        edges_suffix = suffix or "_".join(self.reviews_filename.split(".")[0].split("_")[:2])
+        edges_suffix = suffix or "_".join(self.reviews_filename.split(".")[0].split("_")[2:])
         edges_filename = "_".join(["edges", score.replace("_", "-"), edges_suffix]) + ".csv"
 
         U_T_B = self.user_to_book(self.reviews_filename)

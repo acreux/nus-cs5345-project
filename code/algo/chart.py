@@ -132,7 +132,8 @@ class Chart(object):
                  xlabels="Numbers of readers",
                  ylabels="Books(%)",
                  title='Distribution of books by number of readers',
-                 filename="books")
+                 filename="books",
+                 plus=True)
 
     def book_rating_fig(self):
         self.dist_fig(df=self.book_rating,

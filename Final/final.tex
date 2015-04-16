@@ -24,6 +24,8 @@
 \usepackage{hyperref}
 % \usepackage[autolanguage]{numprint}
 
+
+
 \begin{document}
 \maketitle
 
@@ -81,6 +83,39 @@ As it is explained in section~\ref{sec:data_acquisition}, we have extracted our 
 % Problem with private profiles. Need data from 100 to 350 for 1st degree connection
 
 As we can see, by getting only the first degree connection of 20000 thousand members, we have almost 15 million reviews, 1714613 books and 86000 reviews posters to analyze.
+We first analyze the distribution of the data we have.
+Users have read an average of $166$ books, while a book has been read by around $8$ people. 
+
+As expected, half users have read less than 50 books according to Figure~\ref{fig:readers_book_read}. Besides, just like other such as music or movies, users read the same book. Indeed, according to Figure~\ref{fig:books_books_read}, half of the books has been read by only one person. Just $10$\% of books have been read by more than $10$ readers. This highlights the difference of books.
+
+About the ratings, users have given an average rating of $3.52$ while books have an average of $3.23$. 
+
+% print c.user_average_book()
+% print c.book_average_user()
+% print c.user_average_rating()
+% print c.book_average_rating()
+
+% 166.39514433
+% 8.38730595677
+% 3.524460734
+% 3.22690806765
+
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/users}
+                \caption{Distribution of readers per books read}
+                \label{fig:readers_book_read}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/books}
+                \caption{Distribution of books per readers}
+                \label{fig:books_books_read}
+        \end{subfigure}
+        \caption{Distribution of books and readers}
+\end{figure}
 
 % Books read: 1714613
 
@@ -92,6 +127,50 @@ As we can see, by getting only the first degree connection of 20000 thousand mem
 % column chart 
 % average How many books a user has read - - I want total average
 
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/books_ratings}
+                \caption{Distribution of books}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/user_ratings}
+                \caption{Distribution of readers}
+        \end{subfigure}
+
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/book_scatter_1500}
+                \caption{Books per rating}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/book_scatter}
+                \caption{Books per rating}
+        \end{subfigure}
+
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/user_scatter_1500}
+                \caption{Readers per rating}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{images/user_scatter}
+                \caption{Readers per rating}
+        \end{subfigure}
+\end{figure}
+
+% book_scatter_1500.png
+% book_scatter.png
+% books.png
+% books_ratings.png
+% user_ratings.png
+% user_scatter_1500.png
+% user_scatter.png
+% users.png
 
 % print c.user_average_book()
 % print c.book_average_user()
@@ -139,6 +218,8 @@ The objective of the project is to detect the best pair score function, communit
 % OUHHHH, my last sentence is not very clear!!!!!
 
 
+
+
 \section{Discussion of key challenges}
 
 Many challenges arose during this study and we tried to , and we needed to fix each bottleneck simultaneously.
@@ -177,7 +258,6 @@ For 10000 users, we have to compute 50 million edges. Multiprocessing helps us r
 
 % http://onlinelibrary.wiley.com/doi/10.1002/wics.1319/pdf
 % http://dl.acm.org/citation.cfm?id=1348552&dl=ACM&coll=DL&CFID=658733226&CFTOKEN=26021142
-
 
 However, as of now we have considered users who have given rating for at least a single book as valid users. The data set right now stores a 0 rating if a user has read the book but has not provided a rating for it. We are still working on how to resolve this. One possible way could be to remove this edge between the user and the book. This again could be debatable as by removing this edge we are losing the information that there is a relation between this user and book.\\\\
 The users with private profiles whose data we could not scrape because their reading information is just visible to their friends are also considered as invalid users. So, we have not included them in our data set.\\\\

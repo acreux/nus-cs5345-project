@@ -54,8 +54,9 @@ class UserGraph(Graph):
         return edges_gen()
 
     def _generate_partition(self):
+        #return self.community_multilevel()
         return louvain.find_partition(self, method="Modularity")
-
+        #return self.community_label_propagation()
     @property
     def friends(self):
         if not self._friends:
@@ -82,28 +83,37 @@ class UserGraph(Graph):
                     friends_index[self.user_index[u2]].add(self.user_index[u1])
         return friends_index
 
-    def homophily(self):
+    def homophily(self, i):
         """
         Homophily:
         How many friends are in the book community?
         # This calculates homophily for largest community"""
         h = 0
-        for member in self.partition[0]:
+        for member in self._partition[i]:
 
-            num = len(self.friends[member].intersection(self.partition[0]))
-            den = len([ i for i in friends[member] if i in index ])
+            num = len(self.friends[member].intersection(self._partition[i]))
+            den = len(self.friends[member])
             if den == 0:
                 if num != 0:
                     raise Exception("Error: Not Possible")
             else:
                 h += 1. * num / den
             
-        return 1. * h / len(self.partition[0])
+        return 1. * h / len(self._partition[i]), len(self._partition[i])
 
 
 if __name__ == "__main__":
-    g = UserGraph("edges_common_5000.csv")
-    summary(g)
+    g = UserGraph("random_edges_rating_5000_0_7.csv")
+    print summary(g)
 
     print sum([len(v) for v in g.friends.itervalues()])
-    print g.partition
+    p = g.partition
+    print p.summary()
+    
+    glob_hom = 0
+    for i in range(len(p)):
+        hom, length =  g.homophily(i)
+        glob_hom += hom
+        print hom, length
+    print "global homophily: " + str(float(glob_hom)/len(p))
+    

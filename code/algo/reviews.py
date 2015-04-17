@@ -56,6 +56,10 @@ class Reviews(object):
         edges_suffix = suffix or "_".join(self.reviews_filename.split(".")[0].split("_")[2:])
         edges_filename = "_".join(["edges", score.replace("_", "-"), edges_suffix]) + ".csv"
 
+        edges_timer_filename = "_".join(["edges", score.replace("_", "-"), edges_suffix, "timer"]) + ".txt"
+
+        now = time.time()
+
         U_T_B = self.user_to_book(self.reviews_filename)
 
         # Get the books only
@@ -112,6 +116,10 @@ class Reviews(object):
                 print ind_line, " edges created"
 
         save_edges(edges_created_gen)
+
+        with open(edges_timer_filename, "w") as f:
+            f.write(str(time.time()-now))
+
         return edges_filename
 
 if __name__ == "__main__":

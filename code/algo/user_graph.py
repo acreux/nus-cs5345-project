@@ -51,15 +51,56 @@ class UserGraph(Graph):
     def _generate_partition(self):
         self._partitions = {}
         self.partitions_timer = {}
+        
         now = time()
         self._partitions["louvain"] = Partition(louvain.find_partition(self, method="Modularity"))
         self.partitions_timer["louvain"] = int(time()-now)
+        print "louvain"
+        
         now = time()
-        self._partitions["igraph-multilevel"] = Partition(self.community_multilevel())
-        self.partitions_timer["igraph-multilevel"] = int(time()-now)
+        self.partitions["community_fastgreedy"] = Partition(self.community_fastgreedy().as_clustering())
+        self.partitions_timer["community_fastgreedy"] = int(time()-now)
+        print "community_fastgreedy"
+
         now = time()
-        self._partitions["igraph-label-propag"] = Partition(self.community_label_propagation())
-        self.partitions_timer["igraph-label-propag"] = int(time()-now)
+        self.partitions["community_infomap"] = Partition(self.community_infomap())
+        self.partitions_timer["community_infomap"] = int(time()-now)
+        print "community_infomap"
+
+        now = time()
+        self.partitions["community_leading_eigenvector"] = Partition(self.community_leading_eigenvector())
+        self.partitions_timer["community_leading_eigenvector"] = int(time()-now)
+        print "community_leading_eigenvector"
+
+        now = time()
+        self.partitions["community_label_propagation"] = Partition(self.community_label_propagation())
+        self.partitions_timer["community_label_propagation"] = int(time()-now)
+        print "community_label_propagation"
+
+        now = time()
+        self.partitions["community_multilevel"] = Partition(self.community_multilevel())
+        self.partitions_timer["community_multilevel"] = int(time()-now)
+        print "community_multilevel"
+
+        now = time()
+        self.partitions["community_optimal_modularity"] = Partition(self.community_optimal_modularity())
+        self.partitions_timer["community_optimal_modularity"] = int(time()-now)
+        print "community_optimal_modularity"
+
+        now = time()
+        self.partitions["community_edge_betweenness"] = Partition(self.community_edge_betweenness().as_clustering())
+        self.partitions_timer["community_edge_betweenness"] = int(time()-now)
+        print "community_edge_betweenness"
+
+        now = time()
+        self.partitions["community_spinglass"] = Partition(self.community_spinglass())
+        self.partitions_timer["community_spinglass"] = int(time()-now)
+        print "community_spinglass"
+
+        now = time()
+        self.partitions["community_walktrap"] = Partition(self.community_walktrap().as_clustering())
+        self.partitions_timer["community_walktrap"] = int(time()-now)
+        print "community_walktrap"
 
     @property
     def friends(self):
@@ -121,18 +162,28 @@ class UserGraph(Graph):
                    "size_friends": str(self.friends_size),
                    "friends_median": str(self.friends_median),
                    "friends_alone": str(self.friends_alone)}
-
-        for algo in  ["louvain", "igraph-multilevel", "igraph-label-propag"]:
+        for algo in  ["louvain", "community_fastgreedy", "community_infomap",\
+                      "community_leading_eigenvector_naive",\
+                      "community_leading_eigenvector",\
+                      "community_label_propagation", "community_multilevel",\
+                      "community_optimal_modularity", "community_edge_betweenness",\
+                      "community_spinglass", "community_walktrap"]:
             new_dict = dict(results)
-            clusters_keys = self.partitions[algo].clusters.keys()
-            new_dict.update({
-                "detection_algo": algo,
-                "detection_algo_time": self.partitions_timer[algo],
-                "global_homophily": "{:.3f}".format(self.homophily[algo]),
-                "clusters_size": ",".join([str(self.partitions[algo].clusters_size[k]) for k in clusters_keys]),
-                "clusters_homophily": ",".join(["{:.3f}".format(self.partitions[algo].homophily_dict[k]) for k in clusters_keys]),
-                "clusters_modularity": ",".join(["{:.3f}".format(self.partitions[algo].modularity) for k in clusters_keys])})
-            yield new_dict
+            try:
+                pass
+            except Exception as e:
+                print algo
+                print e
+            else:
+                clusters_keys = self.partitions[algo].clusters.keys()
+                new_dict.update({
+                    "detection_algo": algo,
+                    "detection_algo_time": self.partitions_timer[algo],
+                    "global_homophily": "{:.3f}".format(self.homophily[algo]),
+                    "clusters_size": ",".join([str(self.partitions[algo].clusters_size[k]) for k in clusters_keys]),
+                    "clusters_homophily": ",".join(["{:.3f}".format(self.partitions[algo].homophily_dict[k]) for k in clusters_keys]),
+                    "clusters_modularity": ",".join(["{:.3f}".format(self.partitions[algo].modularity) for k in clusters_keys])})
+                yield new_dict
 
 
     def write_results(self):

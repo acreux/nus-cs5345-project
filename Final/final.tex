@@ -88,7 +88,7 @@ Users have read an average of $166$ books, while a book has been read by around 
 
 As expected, half users have read less than 50 books according to Figure~\ref{fig:readers_book_read}. Besides, just like other such as music or movies, users read the same book. Indeed, according to Figure~\ref{fig:books_books_read}, half of the books has been read by only one person. Just $10$\% of books have been read by more than $10$ readers. This highlights the difference of books.
 
-About the ratings, users have given an average rating of $3.52$ while books have an average of $3.23$. 
+About the ratings, users have given an average rating of $3.52$ while books have an average of $3.23$. This difference, even tiny, strenghens the correlation that a well rated book is more likely to be read.
 
 % print c.user_average_book()
 % print c.book_average_user()
@@ -127,41 +127,72 @@ About the ratings, users have given an average rating of $3.52$ while books have
 % column chart 
 % average How many books a user has read - - I want total average
 
+About the distribtion of ratings, both books and readers have a similar distribution as seen in Figure~
+
+
 \begin{figure}
         \centering
-        \begin{subfigure}[b]{0.4\textwidth}
+        \begin{subfigure}[b]{0.6\textwidth}
                 \includegraphics[width=\textwidth]{images/books_ratings}
                 \caption{Distribution of books}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.4\textwidth}
+        \begin{subfigure}[b]{0.6\textwidth}
                 \includegraphics[width=\textwidth]{images/user_ratings}
                 \caption{Distribution of readers}
         \end{subfigure}
 
-        \begin{subfigure}[b]{0.4\textwidth}
+        \begin{subfigure}[b]{0.6\textwidth}
                 \includegraphics[width=\textwidth]{images/book_scatter_1500}
                 \caption{Books per rating}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.4\textwidth}
-                \includegraphics[width=\textwidth]{images/book_scatter}
-                \caption{Books per rating}
-        \end{subfigure}
-
-        \begin{subfigure}[b]{0.4\textwidth}
+      %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.6\textwidth}
                 \includegraphics[width=\textwidth]{images/user_scatter_1500}
                 \caption{Readers per rating}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.4\textwidth}
-                \includegraphics[width=\textwidth]{images/user_scatter}
-                \caption{Readers per rating}
         \end{subfigure}
+
 \end{figure}
+
+
+% \begin{figure}
+%         \centering
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/books_ratings}
+%                 \caption{Distribution of books}
+%         \end{subfigure}%
+%         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%           %(or a blank line to force the subfigure onto a new line)
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/user_ratings}
+%                 \caption{Distribution of readers}
+%         \end{subfigure}
+
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/book_scatter_1500}
+%                 \caption{Books per rating}
+%         \end{subfigure}%
+%         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%           %(or a blank line to force the subfigure onto a new line)
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/book_scatter}
+%                 \caption{Books per rating}
+%         \end{subfigure}
+
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/user_scatter_1500}
+%                 \caption{Readers per rating}
+%         \end{subfigure}%
+%         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%           %(or a blank line to force the subfigure onto a new line)
+%         \begin{subfigure}[b]{0.4\textwidth}
+%                 \includegraphics[width=\textwidth]{images/user_scatter}
+%                 \caption{Readers per rating}
+%         \end{subfigure}
+% \end{figure}
+
 
 % book_scatter_1500.png
 % book_scatter.png
@@ -214,10 +245,9 @@ About the ratings, users have given an average rating of $3.52$ while books have
 
 \section{Description of the model, algorithm, and/or core of project}
 
-The objective of the project is to detect the best pair score function, community detection alogorithm to get the best homophily with the friends graph.
-% OUHHHH, my last sentence is not very clear!!!!!
-
-
+The objective of the project is to determine that the friends graph captures the homopholy based on the book preferences.
+Indeed, ...
+% Ashihs
 
 
 \section{Discussion of key challenges}

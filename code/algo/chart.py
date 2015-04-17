@@ -62,6 +62,7 @@ class Chart(object):
     def user_scatter(self, lim=10**6, filename=None):
 
         fig, ax = self.get_fig()
+        ax.get_yaxis().set_visible(True)  
 
         # ax.set_xlabel("Number of books read")
         ax.set_ylabel("Average reader rating")
@@ -119,8 +120,8 @@ class Chart(object):
                  start=0,
                  step=50,
                  xlabels="Number of books read",
-                 ylabels="Readers(%)",
-                 title='Distribution of readers by number of books read',
+                 ylabels="",
+                 title='',
                  filename="users", 
                  plus=True)
 
@@ -130,8 +131,8 @@ class Chart(object):
                  start=1,
                  step=1,
                  xlabels="Numbers of readers",
-                 ylabels="Books(%)",
-                 title='Distribution of books by number of readers',
+                 ylabels="",
+                 title='',
                  filename="books",
                  plus=True)
 
@@ -142,7 +143,7 @@ class Chart(object):
                      step=0.2,
                      xlabels="Ratings",
                      ylabels="Books(%)",
-                     title='Distribution of books',
+                     title='',
                      filename="books_ratings")
 
     def user_rating_fig(self):
@@ -152,7 +153,7 @@ class Chart(object):
                      step=0.2,
                      xlabels="Ratings",
                      ylabels="Readers(%)",
-                     title='Distribution of readers',
+                     title='',
                      filename="user_ratings")
 
 
@@ -173,6 +174,7 @@ class Chart(object):
         # fig, ax = plt.subplots(figsize=(20, 14))
 
         fig, ax = self.get_fig()
+        ax.get_yaxis().set_visible(False)  
 
         # Along the same vein, make sure your axis labels are large  
         # enough to be easily read as well. Make them slightly larger  
@@ -204,7 +206,6 @@ class Chart(object):
             x[-1] = str(limit_high) + " +"
 
         # add some text for labels, title and axes ticks
-        # ax.set_ylabel('Users(%)')
         ax.set_xlabel(xlabels)
         ax.set_ylabel(ylabels)
         ax.set_title(title)
@@ -220,7 +221,8 @@ class Chart(object):
             # converting width to int type
             height = bar.get_height()
 
-            if (height < 0.05):        # The bars aren't wide enough to print the ranking inside
+            # if (height < 0.05):        # The bars aren't wide enough to print the ranking inside
+            if (height < 100):        # The bars aren't wide enough to print the ranking inside
                 # yloc_normed = 1.0008 * height
                 yloc = height + max_height*0.02   # Shift the text to the right side of the right edge
                 
@@ -233,7 +235,7 @@ class Chart(object):
 
             xloc = bar.get_x()+bar.get_width()/2.0
         #     ax.text(xloc, yloc_normed, str(val), horizontalalignment='center', color=clr)
-            ax.text(xloc, yloc, '{:.1%}'.format(val_normed), horizontalalignment='center', color=clr)
+            ax.text(xloc, yloc, '{:.1%}'.format(val_normed), horizontalalignment='center', color=clr, fontsize=12)
 
 
         # Finally, save the figure as a PNG.  
@@ -255,7 +257,7 @@ if __name__ == "__main__":
     c.book_rating_fig()
     c.user_rating_fig()
 
-    c.user_scatter(lim=10**6, filename="user_scatter")
-    c.user_scatter(lim=1500, filename="user_scatter_1500")
-    c.book_scatter(lim=10**6, filename="book_scatter")
-    c.book_scatter(lim=1500, filename="book_scatter_1500")
+    # c.user_scatter(lim=10**6, filename="user_scatter")
+    # c.user_scatter(lim=1500, filename="user_scatter_1500")
+    # c.book_scatter(lim=10**6, filename="book_scatter")
+    # c.book_scatter(lim=1500, filename="book_scatter_1500")

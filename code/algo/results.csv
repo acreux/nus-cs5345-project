@@ -20,3 +20,5 @@ edges_same-rating-2_sample_2500_1;same-rating-2;2398;1285164;3139;0;2.0;igraph-l
 edges_common_sample_2500_1;common;2398;1285164;3139;0;2.0;louvain;99;0.218;922,841,632,3;0.163,0.215,0.106,0.389;0.065,0.065,0.065,0.065
 edges_common_sample_2500_1;common;2398;1285164;3139;0;2.0;igraph-multilevel;4;0.120;2,830,634,932;0.000,0.212,0.099,0.167;0.065,0.065,0.065,0.065
 edges_common_sample_2500_1;common;2398;1285164;3139;0;2.0;igraph-label-propag;0;0.348;2398;0.348;0.000
+edges_common_50;common;44;555;2;0;1.0;community_fastgreedy;0;0.053;6,19,19;0.000,0.000,0.158;0.064,0.064,0.064
+edges_common_50;common;44;555;2;0;1.0;community_infomap;0;0.068;44;0.068;0.000

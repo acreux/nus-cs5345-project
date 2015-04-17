@@ -87,10 +87,10 @@ class UserGraph(Graph):
         # self.partitions_timer["community_optimal_modularity"] = int(time()-now)
         # print "community_optimal_modularity"
 
-        now = time()
-        self.partitions["community_edge_betweenness"] = Partition(self.community_edge_betweenness().as_clustering())
-        self.partitions_timer["community_edge_betweenness"] = int(time()-now)
-        print "community_edge_betweenness"
+        # now = time()
+        # self.partitions["community_edge_betweenness"] = Partition(self.community_edge_betweenness().as_clustering())
+        # self.partitions_timer["community_edge_betweenness"] = int(time()-now)
+        # print "community_edge_betweenness"
 
         now = time()
         self.partitions["community_spinglass"] = Partition(self.community_spinglass())

@@ -9,19 +9,30 @@ class Chart(object):
     def __init__(self):
         self.book_counter = defaultdict(int)
         self.user_counter = defaultdict(int)
+        self.clean_book_counter = defaultdict(int)
+        self.clean_user_counter = defaultdict(int)
         self.user_r = defaultdict(int)
         self.book_r = defaultdict(int)
+
+        self.alls = defaultdict(int)
         # with open("user_book_sample_50.csv") as f:
         with open("user_book_raw.csv") as f:
             for line in f:
                 u, b, r = line.split(";")
+                if int(r)>0:
+                    self.clean_book_counter[b] += 1
+                    self.clean_user_counter[u] += 1
+                
                 self.book_counter[b] += 1
                 self.book_r[b] += int(r)
                 self.user_counter[u] += 1
                 self.user_r[u] += int(r)
+                self.alls[int(r)] += 1
 
         self.book_rating = {k: 1. * v/self.book_counter[k] for k, v in self.book_r.iteritems()}
         self.user_rating = {k: 1. * v/self.user_counter[k] for k, v in self.user_r.iteritems()}
+        self.clean_book_rating = {k: 1. * v/self.clean_book_counter[k] for k, v in self.book_r.iteritems() if self.clean_book_counter[k]}
+        self.clean_user_rating = {k: 1. * v/self.clean_user_counter[k] for k, v in self.user_r.iteritems() if self.clean_user_counter[k]}
         
     @staticmethod
     def load(filename="chart"):
@@ -42,10 +53,10 @@ class Chart(object):
         return np.mean(self.book_counter.values())
 
     def user_average_rating(self):
-        return np.mean(self.user_rating.values())
+        return np.mean(self.clean_user_rating.values())
 
     def book_average_rating(self):
-        return np.mean(self.book_rating.values())
+        return np.mean(self.clean_book_rating.values())
 
     def user_median_book(self):
         return np.median(self.user_counter.values())
@@ -54,10 +65,10 @@ class Chart(object):
         return np.median(self.book_counter.values())
 
     def user_median_rating(self):
-        return np.median(self.user_rating.values())
+        return np.median(self.clean_user_rating.values())
 
     def book_median_rating(self):
-        return np.median(self.book_rating.values())
+        return np.median(self.clean_book_rating.values())
 
     def user_scatter(self, lim=10**6, filename=None):
 
@@ -137,7 +148,7 @@ class Chart(object):
                  plus=True)
 
     def book_rating_fig(self):
-        self.dist_fig(df=self.book_rating,
+        self.dist_fig(df=self.clean_book_rating,
                      limit_high=5,
                      start=1,
                      step=0.2,
@@ -147,7 +158,7 @@ class Chart(object):
                      filename="books_ratings")
 
     def user_rating_fig(self):
-        self.dist_fig(df=self.user_rating,
+        self.dist_fig(df=self.clean_user_rating,
                      limit_high=5,
                      start=1,
                      step=0.2,
@@ -156,9 +167,21 @@ class Chart(object):
                      title='',
                      filename="user_ratings")
 
+    def alls_rating_fig(self):
+        self.dist_fig(df=self.alls,
+                     limit_high=5,
+                     start=0,
+                     step=1,
+                     xlabels="Ratings",
+                     ylabels="Reviews(%)",
+                     title='',
+                     filename="all_ratings")
+
+
+
 
     def dist_fig(self, df, limit_high, step, xlabels, ylabels, title, filename, start=0, plus=False):
-        values = np.clip(df.values(), 1, limit_high)
+        values = np.clip(df.values(), start, limit_high)
 
         range_bins = np.arange(start=start, stop=limit_high+2*step, step=step)
 
@@ -166,8 +189,8 @@ class Chart(object):
         hist, bins = np.histogram(values, bins=range_bins)
 
         hist_normed = step*hist_normed
-        print hist, sum(hist)
-        print hist_normed, sum(hist_normed)
+        # print hist, sum(hist)
+        # print hist_normed, sum(hist_normed)
         width = 1 * (bins[1] - bins[0])
         center = (bins[:-1] + bins[1:]) / 2
 
@@ -256,6 +279,7 @@ if __name__ == "__main__":
     c.user_fig()
     c.book_rating_fig()
     c.user_rating_fig()
+    c.alls_rating_fig()
 
     c.user_scatter(lim=10**6, filename="user_scatter")
     c.user_scatter(lim=1500, filename="user_scatter_1500")

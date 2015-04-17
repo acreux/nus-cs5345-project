@@ -2,6 +2,17 @@ from random import sample
 import multiprocessing
 from functools import partial
 
+def clean0(reviews="user_book_raw.csv"):
+    output_filename = "user_book_cleaned_0.csv"
+    with open(reviews) as f,\
+         open(output_filename, "w") as reviews_out:
+        
+        for i, line in enumerate(f):
+            rating = line.rstrip().split(";")[2]
+            if int(rating) > 0:
+                reviews_out.write(line)
+    return output_filename
+
 
 def sample_reviews(size=10**4, suffix=None, reviews="user_book_raw.csv"):
     """Sample reviews"""
@@ -61,5 +72,4 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-
-    sample_reviews(users="user_sample_10000.csv")
+    clean0()

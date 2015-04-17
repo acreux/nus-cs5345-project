@@ -20,7 +20,7 @@ if __name__ == "__main__":
     #     reviews_filenames = r.user_to_user(score=score, threshold=0, chunksize=50000, process=10)
     #     g = UserGraph(reviews_filenames)
     #     g.write_results()
-    files = ["edges_common_sample_2600_1.csv", "edges_same-rating-2_sample_2600_1.csv", "edges_same-rating_sample_2600_1.csv", "edges_same-rating-high_sample_2600_1.csv", "edges_same-rating"]
+    files = ["edges_common_sample_2600_1.csv", "edges_same-rating-2_sample_2600_1.csv", "edges_same-rating_sample_2600_1.csv", "edges_same-rating-high_sample_2600_1.csv"]
     for f in files:
         g = UserGraph(f)
         g.write_results()

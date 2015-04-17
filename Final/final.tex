@@ -34,9 +34,15 @@ Goodreads is a website launched in early 2007, which lets ``people find and shar
 Goodreads provides a multitude of features to its users. It goes beyond the traditional rating and reviewing of books by allowing users to make friends and join and form reading groups based on their literary tastes.
 Users can not only see what their friends have read, but they can also meet new people with similar reading interests. They can make recommendations to friends, follow authors, track the books they are currently reading, have read and want to read. In addition, goodreads provides personalized recommendations to book readers by analyzing the user data.\\\\
 Our project aims  to detect and study goodreads communities based on the book ratings given by users. Through this analysis we seek to understand whether the communities detected based on similar book tastes are alike to the friends communities formed by users themselves on goodreads and the extent to which these user communities on goodreads exhibit homophily.
-\subsection{Assumptions}
-The users who have not provided any ratings for the books that they have read are considered as invalid users and we have eliminated them from our data set. This is because just having read the book does not indicate that the user has liked the book. We also need the rating he has given to the book to know whether he/she likes(high rating) or dislikes (low rating) the book he has read.\\\\
 
+\subsection{Assumptions}
+
+
+% The users who have not provided any ratings for the books that they have read are considered as invalid users and we have eliminated them from our data set. This is because just having read the book does not indicate that the user has liked the book. We also need the rating he has given to the book to know whether he/she likes(high rating) or dislikes (low rating) the book he has read.\\\\
+
+However, as of now we have considered users who have given rating for at least a single book as valid users. The data set right now stores a 0 rating if a user has read the book but has not provided a rating for it. We are still working on how to resolve this. One possible way could be to remove this edge between the user and the book. This again could be debatable as by removing this edge we are losing the information that there is a relation between this user and book.\\\\
+The users with private profiles whose data we could not scrape because their reading information is just visible to their friends are also considered as invalid users. So, we have not included them in our data set.\\\\
+We are assuming that the data we get from scraping is unbiased. That is, we assume that the group ({\it Goodreads Authors/Users}) whose members, members' friends and their books read that we have scraped is representative of readers from various genres. Indeed, this group is very large and popular and is used to share book experiences across different genres.
 
 \section{Related work}
 
@@ -247,12 +253,19 @@ About the distribtion of ratings, both books and readers have a similar distribu
 
 The objective of the project is to determine that the friends graph captures the homopholy based on the book preferences.
 Indeed, ...
-% Ashihs
+% Ashish
+
+Our data enable us to compute the weight of an edge between any two users. The most simple and common way to do this is to compute the projection matrix. For instance, it is normal to consider no edge between two users who have not read any common book. Due to performance issue and based on our assumption, we wanted to interpret the edge between two users. We tried different kinds of scoring functions, some of them were supposed to capture better the homophily.
+Among those scoring functions, some were more focused on the rating, some on books both users have very liked, or just the number of books they have read in common.
+
+
+
+
 
 
 \section{Discussion of key challenges}
 
-Many challenges arose during this study and we tried to , and we needed to fix each bottleneck simultaneously.
+Many challenges arose during this study, and we needed to fix each bottleneck simultaneously.
 
 \subsection{Data processing}
 
@@ -278,20 +291,22 @@ So we chose two ways to deal with it:
 
 \subsection{Projection}
 
-Using a matrix projection is a very basic way of interpreting relation between two users. To give a meaningful weight between, we compute each edges between two users by hand. So, if we want to build a graph with $n$ users, we should compute $\frac{n * (n-1)}{2}$ edges. 
-For 10000 users, we have to compute 50 million edges. Multiprocessing helps us reduce this time by a factor of 10.
+Using a matrix projection is a very basic way of interpreting relation between two users. To give a meaningful weight between, we compute each edges between two users by hand. A problem raised as we needed to compute the edge weight between every pair of two readers. So, if we want to build a graph with $n$ users, we should compute $\frac{n * (n-1)}{2}$ edges. For 10000 users, we have to compute 50 million edges. Multiprocessing helps us reduce this time by a factor of 10.
 
 \section{Evaluation of your experiments / results / finding}
+
+
+
+
+
+
 \section{Outline of each team member’s contributions}
 
 
 
 % http://onlinelibrary.wiley.com/doi/10.1002/wics.1319/pdf
-% http://dl.acm.org/citation.cfm?id=1348552&dl=ACM&coll=DL&CFID=658733226&CFTOKEN=26021142
+% Advanced Review Community detection in large-scale networks: a survey and empirical evaluation
 
-However, as of now we have considered users who have given rating for at least a single book as valid users. The data set right now stores a 0 rating if a user has read the book but has not provided a rating for it. We are still working on how to resolve this. One possible way could be to remove this edge between the user and the book. This again could be debatable as by removing this edge we are losing the information that there is a relation between this user and book.\\\\
-The users with private profiles whose data we could not scrape because their reading information is just visible to their friends are also considered as invalid users. So, we have not included them in our data set.\\\\
-We are assuming that the data we get from scraping is unbiased. That is, we assume that the group ({\it Goodreads Authors/Users}) whose members, members' friends and their books read that we have scraped is representative of readers from various genres. Indeed, this group is very large and popular and is used to share book experiences across different genres.
 
 % \subsection{Objectives}
 

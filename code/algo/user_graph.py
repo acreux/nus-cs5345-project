@@ -82,10 +82,10 @@ class UserGraph(Graph):
         self.partitions_timer["community_multilevel"] = int(time()-now)
         print "community_multilevel"
 
-        now = time()
-        self.partitions["community_optimal_modularity"] = Partition(self.community_optimal_modularity())
-        self.partitions_timer["community_optimal_modularity"] = int(time()-now)
-        print "community_optimal_modularity"
+        # now = time()
+        # self.partitions["community_optimal_modularity"] = Partition(self.community_optimal_modularity())
+        # self.partitions_timer["community_optimal_modularity"] = int(time()-now)
+        # print "community_optimal_modularity"
 
         now = time()
         self.partitions["community_edge_betweenness"] = Partition(self.community_edge_betweenness().as_clustering())
@@ -163,10 +163,9 @@ class UserGraph(Graph):
                    "friends_median": str(self.friends_median),
                    "friends_alone": str(self.friends_alone)}
         for algo in  ["louvain", "community_fastgreedy", "community_infomap",\
-                      "community_leading_eigenvector_naive",\
                       "community_leading_eigenvector",\
                       "community_label_propagation", "community_multilevel",\
-                      "community_optimal_modularity", "community_edge_betweenness",\
+                      "community_edge_betweenness",\
                       "community_spinglass", "community_walktrap"]:
             new_dict = dict(results)
             try:

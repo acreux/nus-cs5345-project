@@ -257,7 +257,7 @@ if __name__ == "__main__":
     c.book_rating_fig()
     c.user_rating_fig()
 
-    # c.user_scatter(lim=10**6, filename="user_scatter")
-    # c.user_scatter(lim=1500, filename="user_scatter_1500")
-    # c.book_scatter(lim=10**6, filename="book_scatter")
-    # c.book_scatter(lim=1500, filename="book_scatter_1500")
+    c.user_scatter(lim=10**6, filename="user_scatter")
+    c.user_scatter(lim=1500, filename="user_scatter_1500")
+    c.book_scatter(lim=10**6, filename="book_scatter")
+    c.book_scatter(lim=1500, filename="book_scatter_1500")

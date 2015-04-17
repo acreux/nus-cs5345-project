@@ -165,8 +165,7 @@ class UserGraph(Graph):
         for algo in  ["louvain", "community_fastgreedy", "community_infomap",\
                       "community_leading_eigenvector",\
                       "community_label_propagation", "community_multilevel",\
-                      "community_edge_betweenness",\
-                      "community_spinglass", "community_walktrap"]:
+                      "community_walktrap"]:
             new_dict = dict(results)
             try:
                 pass

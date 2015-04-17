@@ -21,7 +21,6 @@ if __name__ == "__main__":
     #     g = UserGraph(reviews_filenames)
     #     g.write_results()
     files = ["edges_trivial_sample_2600_1.csv", "edges_trivial_sample_2600_1_timer.txt", "edges_common_sample_2600_1.csv", "edges_common_sample_2600_1_timer.txt", "edges_same-rating-2_sample_2600_1.csv", "edges_same-rating-2_sample_2600_1_timer.txt", "edges_same-rating_sample_2600_1.csv", "edges_same-rating_sample_2600_1_timer.txt", "edges_same-rating-high_sample_2600_1.csv", "edges_same-rating-high_sample_2600_1_timer.txt"]
-    files = ["edges_common_50.csv"]
     for f in files:
         g = UserGraph(f)
         g.write_results()

@@ -46,6 +46,18 @@ We are assuming that the data we get from scraping is unbiased. That is, we assu
 
 \section{Related work}
 
+
+Finally, we also studied different community detection algorithms. Tens of them, if not hundreds exist in the social network analysis field. We do not aim at creating, customizing or optimizing our own algorithm. Given the size of our basic user graph ($86000$), we opt to look for community detection algorithms in large-scale networks.
+Many algorithms has arisen in the last few years, as specified in \cite{survey}.
+% More about commubnity detection
+%  Overlapping
+% Group based, member based
+% What algos do we choose and why?
+
+% Ashish - Akansha ?
+
+
+
 \section{Description of data collection and pre-processing}
 \label{sec:data_acquisition}
 
@@ -258,6 +270,7 @@ Indeed, ...
 Our data enable us to compute the weight of an edge between any two users. The most simple and common way to do this is to compute the projection matrix. For instance, it is normal to consider no edge between two users who have not read any common book. Due to performance issue and based on our assumption, we wanted to interpret the edge between two users. We tried different kinds of scoring functions, some of them were supposed to capture better the homophily.
 Among those scoring functions, some were more focused on the rating, some on books both users have very liked, or just the number of books they have read in common.
 
+% Detail the scoring functions?
 
 
 

@@ -48,7 +48,7 @@ We are assuming that the data we get from scraping is unbiased. That is, we assu
 
 
 Finally, we also studied different community detection algorithms. Tens of them, if not hundreds exist in the social network analysis field. We do not aim at creating, customizing or optimizing our own algorithm. Given the size of our basic user graph ($86000$), we opt to look for community detection algorithms in large-scale networks.
-Many algorithms has arisen in the last few years, as specified in \cite{survey}.
+Many algorithms have arisen in the last few years, as specified in \cite{survey}.
 % More about commubnity detection
 % Overlapping
 % Group based, member based
@@ -61,6 +61,9 @@ Many algorithms has arisen in the last few years, as specified in \cite{survey}.
 
 \section{Description of data collection and pre-processing}
 \label{sec:data_acquisition}
+
+\subsection{Data collection}
+\label{sec:data_colection}
 
 % Goodread provides well documented and publicly accessible API to query various features supported by the website. All we need is a developer key, which one gets after signing up on goodreads, and an OAuth access to use numerous APIs. The data of the users on a website, being the concern of privacy, is not readily available by means of goodread APIs. Aside from this a goodread user has liberty to keep his/her profile private making it accessible only to the friends on goodreads. Given the large user-base of goodreads, we hope to get sizable dataset to run our analysis.\\\\
 % Although the data scraping is laborious and time consuming, its is vital in our study. For a fair study, the data must be unbiased. The method which we use to gather the data may add some bias to it. So selection of scraping method is critical to data acquisition. There are two ways one can collect the data:
@@ -77,7 +80,7 @@ At the end, we have scraped the ratings of more than 80000 members including mor
 \subsection{Statistics}
 
 An overview of the goodreads data we have scraped is vital as it helps us understand and grasp insight of the data we are munging.
-As it is explained in section~\ref{sec:data_acquisition}, we have extracted our data in two steps:
+As it is explained in section~\ref{sec:data_colection}, we have extracted our data in two steps:
 \begin{itemize}
 \item Members of the Goodreads Authors/Users
 \item Friends of the Goodreads Authors/Users members
@@ -151,24 +154,24 @@ About the distribtion of ratings, both books and readers have a similar distribu
 
 \begin{figure}
         \centering
-        \begin{subfigure}[b]{0.6\textwidth}
+        \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{images/books_ratings}
                 \caption{Distribution of books}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.6\textwidth}
+        \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{images/user_ratings}
                 \caption{Distribution of readers}
         \end{subfigure}
 
-        \begin{subfigure}[b]{0.6\textwidth}
+        \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{images/book_scatter_1500}
                 \caption{Books per rating}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
       %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.6\textwidth}
+        \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{images/user_scatter_1500}
                 \caption{Readers per rating}
         \end{subfigure}
@@ -277,6 +280,8 @@ Among those scoring functions, some were more focused on the rating, some on boo
 
 
 
+
+
 \section{Discussion of key challenges}
 
 Many challenges arose during this study, and we needed to fix each bottleneck simultaneously.
@@ -309,6 +314,7 @@ Using a matrix projection is a very basic way of interpreting relation between t
 
 \section{Evaluation of your experiments / results / finding}
 
+% based on analysis, _analysis, results.csv
 
 
 

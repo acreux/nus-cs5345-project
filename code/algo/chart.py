@@ -66,7 +66,7 @@ class Chart(object):
 
         # ax.set_xlabel("Number of books read")
         ax.set_ylabel("Average reader rating")
-        ax.set_title("Distribution of reader rating")
+        # ax.set_title("Distribution of reader rating")
         
         y = [self.user_counter[k] for k in self.user_counter if self.user_counter[k]<lim]
         x = [self.user_rating[k] for k in self.user_counter if self.user_counter[k]<lim]
@@ -102,7 +102,7 @@ class Chart(object):
 
         # ax.set_xlabel("Number of readings")
         ax.set_ylabel("Average book rating")
-        ax.set_title("Distribution of average book rating")
+        # ax.set_title("Distribution of average book rating")
 
         y = [self.book_counter[k] for k in self.book_counter if self.book_counter[k]<lim]
         x = [self.book_rating[k] for k in self.book_counter if self.book_counter[k]<lim]

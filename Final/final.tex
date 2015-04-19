@@ -59,6 +59,7 @@ This would give us insights into whether the friendship and groups formed on goo
 % In addition, if we get time, we can also look at how the recommendations and friendships in the goodreads' user network affect the choice of books. This information can be used by goodreads themselves to improve their recommendation engine.
 
 \section{Related Work}
+\label{sec:related_work}
 Our focus is on studying whether the existing groups on goodreads exhibit homophily based on the communities we detect using the user graph generated from the book ratings given by users.Based on the sample we have, the graph is very dense.
 With less than 8000 user nodes, we have more than 16 million edges, and thus the density reaches 50 \%.
 % Dont really understand the next sentence
@@ -111,9 +112,9 @@ We are using the first strategy to scrape the data off the goodreads. Plus the d
         \centering
         \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{images/all_ratings}
-                \label{fig:all_reviews}
         \end{subfigure}%
         \caption{Distribution of reviews}
+        \label{fig:all_reviews}
 \end{figure}
 
 
@@ -140,7 +141,8 @@ As we can see in Table~\ref{table:crawl_stat}, by getting only the first degree 
 \#Books rated              &  171653                     &   11559                  &   1714613      \\ \hline
 \end{tabular}
 \end{center}
-\caption{Goodreads Authors/Users Statistics} \label{table:crawl_stat}
+\caption{Goodreads Authors/Users Statistics}
+\label{table:crawl_stat}
 \end{table}
 % Problem with private profiles. Need data from 100 to 350 for 1st degree connection
 % But akanksha has already uploaded the 100 to 350 data
@@ -231,22 +233,39 @@ About the distribtion of ratings, both books and readers have a similar distribu
 \label{sec:method}
 % Right about score functions - sab kuch
 \subsection{Score Function}
-As stated earlier, the objective of the current study is to explore the homophily in the goodreads network. Homophily, the concept in the Social Network Analysis, tries to reason the existence of ties among different vertices in the network. Homophily says that the ties exist between the vertices which share similar properties. The kind of properties, a vertex has, depends on the type of social network under the study. For instance, in a citation network the research domain of the authors serve as the property a vertex possesses whereas in an online dating network the hobbies, mutual interests of the users are the driving force for initiating ties among the users. Goodreads network not only has reading groups of users but also has the provision to become a friend of user. In this study, we want to reason the ties which goodreads have as a part of friendship graph.\\\\
-One can think about many reasons which leads a user to connect another user on goodreads. We need to quantify this notion so as to make observations. We use different score functions while generating a user-user graph from the scraped data. Each score function quantifies a kind of homophily which we want to study. We have considered following score functions.
+As stated earlier, the objective of the current study is to explore the homophily in the goodreads network.
+Homophily, the concept in the Social Network Analysis, tries to reason the existence of ties among different vertices in the network.
+Homophily says that ties exist between vertices which share similar properties.
+These properties depend on the type of social network under the study.
+For instance, in a citation network, research domains characterize authors whereas in an online dating network users\' hobbies, mutual interests are the driving force for initiating ties among the users. Goodreads network not only has reading groups of users but also has the provision to become a friend of user.
+In this study, we want to reason the ties which goodreads have as a part of friendship graph.\\\\
+One can think about many reasons which leads a user to connect to another user on goodreads.
+We need to quantify this notion so as to make observations.
+We use different score functions while generating a user-user graph from the scraped data.
+For each pair user-user, a score function quantifies a kind of homophily which we want to study.
+We have considered following score functions.
+
 \begin{description}
-	\item[Common Books] Given two users, we establish an edge betweefn the users if and only if both of the users have read {\it threshold} number of books in common. We can tune the threshold to get the extent of homophily.
-    \item[Rating Based] It builds on the earlier score by incorporating the rating given by the users to the books they have read. We add an edge between the users if the users have given {\it similar}\footnote{For instance, ratings differ by one} ratings to at least {\it threshold} fraction of the books they have read.
+	\item[Common Books] Given two users, the homophily is defined by the number of books both users have read in common.
+    \item[Common Books Normalized] Given two users, the homophily is defined by the number of books both users have read in common, normalized by the number of books both users have read in total.
+    \item[Rating Based] It builds on the earlier score by incorporating the rating given by the users to the books they have read. Given two users, we compute the number of {\it similar}\footnote{For instance, ratings differ by one} ratings, normalized by the number of common books both uesrs have read.
+    \item[High Rating Based] This score behaves the same as \textit{Rating Based} except we give a higher weight to high scores.
+    If both users have given a 5 rating to the same book, the score will be highers than if they have both rated it 2. 
 \end{description}
-First score function shows how similar books user have read whereas the second score function is more subtle looking at whether the users have liked the books they have read. We construct user-user graphs using these score functions and scraped data.
+
+
+First and second score function show how similar books user have read whereas others are more subtle looking at whether the users have liked the books they have read. The fourth score is based on the fact that a reader is more defined by the books he likes than the books he does not like. We construct user-user graphs using these score functions and scraped data.
 
 \subsection{Sampling}
-We want to find the communities in the user-user graph formed in this way. But the number of users is prohibitive to obtain the communities in the network in considerable amount of time. A few techniques can be employed to reduce the number of users:
+We want to find the communities in the user-user graph formed in this way. Nonetheless, the number of users is prohibitive to obtain the communities in the network in considerable amount of time. A few techniques can be employed to reduce the number of users:
 \begin{description}
-	\item[Edge Sampling] Instead of considering all of the sampled data, we consider fraction of edges between user and book. Random sampling fails to capture important users since this technique may not consider all the books which a user has read
-    \item[User Sampling] In this technique, we directly sample desired number of users from a set of users. Then we use all the books read by the sampled set of users to create user-user matrix.
-    \item[Active Users] It can be clearly observed that, there is a large fraction of users who have read very few books. It may be advantageous to focus the study on voracious readers. These are the reader who have read many books and reviewed them. We can choose the users who have read at lest $k$ books. One can tune $k$, to get desired number of users.
+	\item[Reviews Sampling] Instead of considering all reviews, we can consider only a fraction of them. However, random sampling fails to capture important users since this technique may not consider all the books which a user has read. We did \textbf{not} use it.
+    \item[Users Sampling] In this technique, we directly sample desired number of users from a set of users. Then we use all the books read by the sampled set of users to create user-user matrix. This sampling method is fair.
+    \item[Active Users] It can be clearly observed that, there is a large fraction of users who have read very few books. It may be advantageous to focus the study on voracious readers. These are the readers who have read many books and reviewed them. We can choose the users who have read at least $k$ books. One can tune $k$, to get desired number of users.
+    \item[Edges Filtering] Even after sampling the readers, a 10000 readers sample can generate 25 million edges if the user-user graph density is still 50\%. Given that each edge has a score, we can filter them and take the $n$ highest edges.
+
 \end{description}
-We have implemented {\it user sampling} and {\it active users} method to restrict the number of users.
+We have implemented {\it users sampling}, {\it active users} and {\it edges filtering}.
 
 \subsection{Community Detection}
 Once the communities are found we proceed to calculate homophily in the network. To calculate the homophily, we use the friendship information related to users. Let $S$ denote the set of users in a graph and $f(u)$ denotes set of friends of user $u$($\in S$) in $D$. Let $\mathcal{C}$ be the set of communities returned by community detection algorithm. Homophily of cluster $C_i$ is calculated as:
@@ -278,6 +297,24 @@ Use of matrix multiplication is a classical way to compute one mode projection. 
 %To quantify it for a certain community, consider $\mathcal{U}(V_u, E_u)$, projected user matrix and $\mathcal{F}(V_u, E_f)$ friendship network in goodreads. Let $\mathcal{C}(V_c, E_c)$ be a community in $\mathcal{U}$. The extent of homophily in community $\mathcal{C}$ is given by $\frac{|E_c \cap E_f|}{|E_c|}$.
 
 \section{Evaluation}
+
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lcccc}
+\hline
+Size Sample (thousand) & Sampling Users  &   Score function &  Size Edges (million) &  Detection Algorithm & Number of clusters & Global homophily \\ \hline
+3  & Random         & Common             &  1.9  &  louvain  & 4 &  0.133
+3  & Random         & Common             &  1.9  &  walktrap  & 153 &  0.007
+3  & Random         & High Rating             &  1.8  &  louvain  & 4 &  0.12
+3  & Random         & High Rating             &  1.8  &  walktrap  & 153 &  0.007
+
+\end{tabular}
+\end{center}
+\caption{Goodreads Authors/Users Statistics}
+\label{table:crawl_stat}
+\end{table}
+
 
 \section{Outline of each team member's contributions}
 

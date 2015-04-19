@@ -199,23 +199,24 @@ class UserGraph(Graph):
 
 class Partition(igraph.clustering.VertexClustering):
 
-    def __init__(self, vc):
+    def __init__(self, vc, friends):
         self.vc = vc
         self.clusters = dict(enumerate(vc))
         self.clusters_size = {k:len(v) for k, v in self.clusters.iteritems()}
         self.homophily_dict = None
+        self.friends = friends
 
     @property
     def modularity(self):
         return self.vc.modularity
 
-    def homophily(self, friends_index):
+    def homophily(self):
         """Return list of parition homophily and size of each partition"""
         if not self.homophily_dict:
-            self.homophily_dict = {k: self._get_cluster_homophily(v, friends_index) for k, v in self.clusters.iteritems()}
+            self.homophily_dict = {k: self._get_cluster_homophily(v, self.friends) for k, v in self.clusters.iteritems()}
         return np.mean(self.homophily_dict.values())
 
-    def _get_cluster_homophily(self, clst, friends_index):
+    def _get_cluster_homophily(self, clst):
         """
         Homophily:
         How many friends are in the book community?
@@ -223,8 +224,8 @@ class Partition(igraph.clustering.VertexClustering):
         h = 0
         for member in clst:
 
-            num = len(friends_index[member].intersection(clst))
-            den = len(friends_index[member])
+            num = len(self.friends[member].intersection(clst))
+            den = len(self.friends[member])
             if den == 0:
                 if num != 0:
                     raise Exception("Error: Not Possible")

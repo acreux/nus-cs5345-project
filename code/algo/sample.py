@@ -72,4 +72,4 @@ def sample_friends(users="users_sample_5.csv", friends="friends.csv"):
 
 
 if __name__ == "__main__":
-    clean0()
+    sample_friends()

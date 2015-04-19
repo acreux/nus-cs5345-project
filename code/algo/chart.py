@@ -14,7 +14,7 @@ class Chart(object):
         self.user_r = defaultdict(int)
         self.book_r = defaultdict(int)
 
-        self.alls = defaultdict(int)
+        self.alls = []
         # with open("user_book_sample_50.csv") as f:
         with open("user_book_raw.csv") as f:
             for line in f:
@@ -27,7 +27,7 @@ class Chart(object):
                 self.book_r[b] += int(r)
                 self.user_counter[u] += 1
                 self.user_r[u] += int(r)
-                self.alls[int(r)] += 1
+                self.alls.append(int(r))
 
         self.book_rating = {k: 1. * v/self.book_counter[k] for k, v in self.book_r.iteritems()}
         self.user_rating = {k: 1. * v/self.user_counter[k] for k, v in self.user_r.iteritems()}
@@ -126,7 +126,7 @@ class Chart(object):
         plt.savefig(filename_scatter + ".png", bbox_inches="tight", dpi=100);
 
     def user_fig(self):
-        self.dist_fig(df=self.user_counter,
+        self.dist_fig(df=self.user_counter.values(),
                  limit_high=500,
                  start=0,
                  step=50,
@@ -137,7 +137,7 @@ class Chart(object):
                  plus=True)
 
     def book_fig(self):
-        self.dist_fig(df=self.book_counter,
+        self.dist_fig(df=self.book_counter.values(),
                  limit_high=10,
                  start=1,
                  step=1,
@@ -148,7 +148,7 @@ class Chart(object):
                  plus=True)
 
     def book_rating_fig(self):
-        self.dist_fig(df=self.clean_book_rating,
+        self.dist_fig(df=self.clean_book_rating.values(),
                      limit_high=5,
                      start=1,
                      step=0.2,
@@ -158,7 +158,7 @@ class Chart(object):
                      filename="books_ratings")
 
     def user_rating_fig(self):
-        self.dist_fig(df=self.clean_user_rating,
+        self.dist_fig(df=self.clean_user_rating.values(),
                      limit_high=5,
                      start=1,
                      step=0.2,
@@ -178,10 +178,8 @@ class Chart(object):
                      filename="all_ratings")
 
 
-
-
     def dist_fig(self, df, limit_high, step, xlabels, ylabels, title, filename, start=0, plus=False):
-        values = np.clip(df.values(), start, limit_high)
+        values = np.clip(df, start, limit_high)
 
         range_bins = np.arange(start=start, stop=limit_high+2*step, step=step)
 

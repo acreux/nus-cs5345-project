@@ -232,7 +232,7 @@ class Partition(igraph.clustering.VertexClustering):
             else:
                 h += 1. * num / den
             
-        return 1. * h / len(clst)
+        return 1. * h
 
 
 if __name__ == "__main__":

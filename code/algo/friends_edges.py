@@ -1,8 +1,11 @@
 import numpy as np
+from matplotlib import pyplot as plt
+import cPickle as pickle
 
 
-def get_fig(self):
+def get_fig():
     # Create new Figure with black background
+    plt.close()
     fig = plt.figure()
     fig.set_size_inches(15,15)
 
@@ -19,14 +22,13 @@ def get_fig(self):
 
     return fig, ax
 
-def dist_fig(self, values, scores, filename="sss"):
-    # values = np.clip(df, start, limit_high)
+def dist_fig(df, friends, start=0, limit_high=400, filename="dd", bin_size=150):
+    values = np.clip(df, start, limit_high)
+    step = (limit_high-start)/float(bin_size)
+    range_bins = np.arange(start=start, stop=limit_high+2*step, step=step)
+    # hist_normed, bins = np.histogram(values, bins=1000, density=True)
+    hist, bins = np.histogram(values, bins=range_bins, density=True)
 
-    # range_bins = np.arange(start=start, stop=limit_high+2*step, step=step)
-    # range_bins = np.arange(start=start, stop=limit_high+2*step, step=step)
-
-    hist_normed, _ = np.histogram(values, bins=20, density=True)
-    # hist, bins = np.histogram(values, bins=range_bins)
 
     # hist_normed = step*hist_normed
     # print hist, sum(hist)
@@ -36,7 +38,12 @@ def dist_fig(self, values, scores, filename="sss"):
 
     # fig, ax = plt.subplots(figsize=(20, 14))
 
-    fig, ax = self.get_fig()
+    fig, ax = get_fig()
+
+    
+
+
+
     # ax.get_yaxis().set_visible(False)  
 
     # Along the same vein, make sure your axis labels are large  
@@ -74,7 +81,16 @@ def dist_fig(self, values, scores, filename="sss"):
     # ax.set_title(title)
     # ax.set_xticks(center)
     # ax.set_xticklabels(x, fontsize=14, rotation=+45)
-    bars = plt.bar(center, hist_normed, align='center', width=width, color="#3F5D7D")
+    # bars = plt.bar(center, hist, align='center', width=width, color="#3F5D7D")
+    bars = plt.bar(center, hist, align='center', width=width, color="b")
+    import random
+
+    friends_max = [i for i in friends if i<limit_high]
+    friends_random = random.sample(friends_max, 20)
+    friends_height = [max(hist)] * len(friends_random)
+
+    bars = plt.bar(friends_random, friends_height, align='center', width=width/3., color="r")
+
 
     # max_height = max(b.get_height() for b in bars)
     # # Lastly, write in the ranking inside each bar to aid in interpretation
@@ -108,39 +124,44 @@ def dist_fig(self, values, scores, filename="sss"):
     plt.savefig(filename + ".png", bbox_inches="tight", dpi=100); 
 
 def analyze(friends_file, edges_file):
-    edges = {}
-    with open(edges_file) as f:
-        for line in f:
-            try:
-                u, v, score = line.rstrip().split(";")
-                edges[(u,v)] = score, 0
-            except Exception:
-                pass
+    # edges = {}
+    # with open(edges_file) as f:
+    #     for line in f:
+    #         try:
+    #             u, v, score = line.rstrip().split(";")
+    #             edges[(u,v)] = score, 0
+    #         except Exception:
+    #             print line
 
-    with open(friends_file) as g:
-        for line in g:
-            w, x = line.rstrip().split(";")
-            try:
-                a, b = edges[(u,v)]
-            except KeyError:
-                pass
-            else:
-                edges[(u,v)] = a, 1
-            try:
-                a, b = edges[(v,u)]
-            except KeyError:
-                pass
-            else:
-                edges[(u,v)] = a, 1
+    # print "edges finished"
 
-    edges_u = [c for c, _ in edges.values()]
-    scores_u = [c for _,c in edges.values()]
-    dist_fig(edges_u, scores_u, "test")
+    # with open(friends_file) as g:
+    #     for line in g:
+    #         w, x = line.rstrip().split(";")
+    #         try:
+    #             a, _ = edges[(w,x)]
+    #         except KeyError:
+    #             pass
+    #         else:
+    #             edges[(w,x)] = a, 1
+    #         try:
+    #             a, _ = edges[(x,w)]
+    #         except KeyError:
+    #             pass
+    #         else:
+    #             edges[(x,w)] = a, 1
+
+    # with open("yyy", "wb") as f:
+    #     pickle.dump(edges, f)
+    # print "saved"
+
+    with open("yyy", "rb") as g:
+        edges = pickle.load(g)
+
+    friends_u = [int(float(c)) for c,f in edges.values() if f==1]
+    scores_u = [int(float(c)) for c, _ in edges.values()]
+    dist_fig(scores_u, friends_u, 0, 200, "active_edges_common_600_20_friends.png")
 
 if __name__ == "__main__":
-    analyze("friends.csv", "edges_same-rating-2_5000.csv")
-
-
-
-
+    analyze("friends.csv", "edges/random_edges_common_5000_30.csv")
 
